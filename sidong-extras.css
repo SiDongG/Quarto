@@ -1,0 +1,200 @@
+/* ============================================================
+   sidong-extras.css
+   Small overrides layered on top of the SCSS theme.
+   Most list/heading styling now lives in sidong-theme.scss —
+   this file is only for things easier to express as plain CSS
+   or that you tweak often per-deck.
+   ============================================================ */
+
+/* Title-slide logo row (kept from your original) */
+.title-logos {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 1.2em 0;
+}
+.title-logos img.logo {
+  max-height: 90px;
+  margin: 0 15px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* ---- Figure placement & captions ---------------------------------
+   Center every figure caption regardless of how Quarto wraps it. */
+.reveal figure { margin: 0.4em auto; }
+.reveal figure > figcaption,
+.reveal figcaption {
+  text-align: center !important;
+  font-size: 0.68em;
+  color: #5c6660;
+  margin-top: 0.3em;
+  line-height: 1.25;
+}
+/* Quarto's "Figure N:" cross-ref prefix — style the number in gold */
+.reveal figcaption .quarto-figure-number,
+.reveal figcaption strong { color: #B3A369; font-weight: 600; }
+
+/* ---- Two-column figure-beside-text (Quarto native .columns) -------
+   Use this for a real 60/40 split — text left, figure right, no blank
+   gaps. Reveal renders .columns as flexbox; we just refine alignment.  */
+.reveal .columns {
+  display: flex;
+  align-items: center;      /* vertically center the figure against text */
+  gap: 1.2em;
+}
+.reveal .columns > .column { min-width: 0; }
+/* figures inside a column fill the column width, no float, capped height */
+.reveal .column img {
+  width: 100%;
+  max-height: 68vh;
+  object-fit: contain;
+  float: none;
+}
+.reveal .column figure { margin: 0; }
+
+/* Float a figure to the right/left of body text.
+   Usage: wrap the image in ::: {.fig-right} ... :::
+   Height is capped so a tall figure can't push content off-slide.     */
+.reveal .fig-right {
+  float: right;
+  width: 38%;
+  margin: 0 0 0.5em 1em;
+}
+.reveal .fig-left {
+  float: left;
+  width: 38%;
+  margin: 0 1em 0.5em 0;
+}
+.reveal .fig-right img,
+.reveal .fig-left img {
+  width: 100%;
+  max-height: 42vh;
+  object-fit: contain;
+}
+.reveal .fig-right figure,
+.reveal .fig-left figure { margin: 0; }
+/* clear floats so the next slide/heading isn't pulled up */
+.reveal .clear-figs { clear: both; }
+
+/* Two-column helper for figure-beside-text slides.
+   Quarto's native ::: {.columns} works too, but this is handy. */
+.side-by-side {
+  display: flex;
+  gap: 1.2em;
+  align-items: flex-start;
+}
+.side-by-side > * { flex: 1; }
+
+/* Footnote / reference line at the bottom of a slide.
+   The content slide is a full-height flex column (see theme), so
+   margin-top:auto pushes these to the bottom regardless of body length.
+   Use  ::: aside  or  ::: {.slide-ref} . */
+.reveal aside,
+.reveal .aside-note,
+.reveal .slide-ref {
+  display: block;
+  margin-top: auto;          /* stick to the bottom of the slide */
+  padding-top: 0.3em;
+  border-top: 1px solid rgba(67, 84, 103, 0.3);
+  font-size: 0.55em;
+  line-height: 1.3;
+  color: #5c6660;
+  font-style: italic;
+  text-align: left;
+}
+.reveal .slide-ref { font-style: normal; }
+.reveal .slide-ref p,
+.reveal aside p { margin: 0.1em 0; }
+/* citation links in the body: gold, subtle */
+.reveal .citation a { color: #B3A369; border-bottom: none; }
+
+/* Tighten spacing when a slide is content-dense.
+   Add {.tight} to the slide heading:  ## Title {.tight}   */
+.reveal .tight ul > li { margin-bottom: 0.18em; }
+.reveal .tight p { margin-bottom: 0.3em; }
+
+/* ============================================================
+   VISUAL VARIETY TOOLKIT
+   Drop-in blocks that break the monotony of bullet lists.
+   Each is a fenced div:  ::: {.classname} ... :::
+   ============================================================ */
+
+/* 1. Takeaway — gold key-point strip (your favorite) */
+.reveal .takeaway {
+  margin-top: 0.8em;
+  padding: 0.45em 0.9em;
+  background: rgba(179, 163, 105, 0.14);
+  border-left: 4px solid #B3A369;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.9em;
+}
+
+/* 2. Callout variants — same shape, different intent/color.
+      .note (blue), .warning (coral), .key (navy fill) */
+.reveal .note,
+.reveal .warning,
+.reveal .keybox {
+  margin: 0.6em 0;
+  padding: 0.45em 0.9em;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.92em;
+}
+.reveal .note    { background: rgba(38,139,210,0.10);  border-left: 4px solid #268bd2; }
+.reveal .warning { background: rgba(203,75,22,0.10);   border-left: 4px solid #cb4b16; }
+.reveal .keybox  { background: #003057; color: #fdf6e3; border-left: 4px solid #B3A369; }
+.reveal .keybox strong { color: #B3A369; }
+
+/* 3. Card row — turn a list of parallel items into side-by-side cards.
+      Wrap items in ::: {.cards} and each card in ::: {.card} */
+.reveal .cards {
+  display: flex;
+  gap: 0.8em;
+  align-items: stretch;
+  margin: 0.6em 0;
+}
+.reveal .card {
+  flex: 1;
+  background: #fff;
+  border-top: 3px solid #B3A369;
+  border-radius: 4px;
+  padding: 0.6em 0.8em;
+  box-shadow: 0 2px 10px rgba(0,48,87,0.08);
+  font-size: 0.9em;
+}
+.reveal .card h4,
+.reveal .card strong:first-child { color: #003057; }
+
+/* 4. Lead-in — an oversized opening line to anchor a slide before bullets.
+      ::: {.lead} Your framing sentence. :::                       */
+.reveal .lead {
+  font-size: 1.15em;
+  color: #435467;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0.2em 0 0.6em 0;
+  padding-left: 0.6em;
+  border-left: 4px solid #435467;
+}
+
+/* 5. Two-tone list — alternating subtle background bands on top-level
+      items so a long list reads as grouped rows, not a gray wall.
+      Add {.striped} to the slide:  ## Title {.striped}            */
+.reveal .striped ul > li {
+  padding: 0.2em 0.4em 0.2em 1.2em;
+  border-radius: 3px;
+}
+.reveal .striped ul > li:nth-child(odd) {
+  background: rgba(67,84,103,0.05);
+}
+
+/* 6. Emphasis pill — inline highlighted term.
+      [term]{.pill}                                                */
+.reveal .pill {
+  background: rgba(179,163,105,0.22);
+  padding: 0.05em 0.4em;
+  border-radius: 999px;
+  font-size: 0.92em;
+  white-space: nowrap;
+}

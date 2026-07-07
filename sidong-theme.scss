@@ -1,0 +1,393 @@
+/*-- scss:defaults --*/
+// =====================================================================
+// Sidong reveal.js theme — Quarto SCSS
+// A refined Solarized-light + Georgia Tech gold academic theme.
+// Use with:  theme: [default, sidong-theme.scss]
+// =====================================================================
+
+// ---- Palette -------------------------------------------------------
+$base:        #fdf6e3;   // Solarized light background 
+$base-panel:  #fbf1d9;   // slightly deeper cream for callout fills
+$ink:         #33403a;   // primary text — warm near-black, not pure #222
+$ink-soft:    #5c6660;   // secondary text
+$gt-gold:     #B3A369;   // Georgia Tech gold (accent 1)
+$gt-navy:     #003057;   // Georgia Tech navy (accent 2 — replaces mismatched slate)
+$blue:        #268bd2;   // Solarized blue (emphasis / links)
+$blue-deep:   #1a6ba8;   // darker blue for hover / rules
+$slate:       #435467;   // your original slate, retained for structure elements
+
+// ---- Fonts ---------------------------------------------------------
+// Source Sans 3 for UI/headings, a serif for body reads cleaner for math-heavy decks.
+$font-family-sans-serif: "Source Sans 3", "Source Sans Pro", Helvetica, sans-serif !default;
+$font-family-serif: "Source Serif 4", "Georgia", serif !default;
+
+$presentation-font-size-root: 20px;
+$presentation-heading-font: $font-family-sans-serif;
+$presentation-heading-color: $gt-navy;
+$presentation-heading-font-weight: 600;
+$body-color: $ink;
+$link-color: $blue;
+$link-color-hover: $blue-deep;
+$selection-bg: $blue;
+
+// Reveal theme variable hooks
+$backgroundColor: $base;
+$mainColor: $ink;
+$headingColor: $gt-navy;
+$headingTextTransform: none;           
+$headingFontWeight: 600;
+$linkColor: $blue;
+$linkColorHover: $blue-deep;
+$selectionBackgroundColor: $blue;
+
+/*-- scss:rules --*/
+// ---- Global --------------------------------------------------------
+.reveal {
+  font-family: $font-family-serif;
+  font-size: $presentation-font-size-root;
+  color: $ink;
+  letter-spacing: 0.005em;
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+// ---- Headings ------------------------------------------------------
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+  font-family: $font-family-sans-serif;
+  color: $gt-navy;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  word-wrap: break-word;
+}
+
+// Section/slide title — pinned near the top like a running header.
+.reveal h2 {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: $gt-navy;
+  margin: 0 0 0.5em 0;
+  padding: 0 0 0.12em 0;
+  border-bottom: 3px solid $gt-gold;   // gold underline ties the brand together
+}
+
+// Pull content slides up toward the top edge so titles read as headers.
+// Make each content slide a full-height flex column so a bottom element
+// (.slide-ref / aside) can be pushed to the bottom with margin-top:auto.
+.reveal .slides > section:not(.title-slide):not(#title-slide),
+.reveal .slides > section > section:not(.title-slide) {
+  top: 0 !important;
+  padding-top: 0.15em;
+  display: flex !important;
+  flex-direction: column;
+  min-height: 92%;          /* fill most of the slide height */
+}
+
+// Title slide: vertically + horizontally centered block.
+.reveal .slides > section.title-slide,
+.reveal .slides > section#title-slide {
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center !important;
+  align-items: center;
+  top: 0 !important;
+}
+
+.reveal h2 em,
+.reveal h3 em {
+  color: $blue;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.reveal h3 {
+  font-size: 1.15em;
+  color: $slate;
+  margin-bottom: 0.4em;
+}
+
+// Title slide H1
+.reveal h1 {
+  font-size: 2.1em;
+  color: $gt-navy;
+  margin: 0 0 0.3em 0;
+  border: none;
+}
+
+// ---- Title slide polish -------------------------------------------
+// Center everything on the title slide (title, subtitle, author, date).
+.reveal .title-slide,
+#title-slide {
+  text-align: center;
+}
+.reveal .title-slide h1,
+#title-slide .title { text-align: center; }
+
+.reveal .title-slide .subtitle,
+.reveal .subtitle {
+  color: $gt-gold;
+  font-weight: 600;
+  font-variant-caps: normal;
+  font-size: 1.1em;
+  text-align: center;
+}
+
+.reveal .title-slide .author,
+.reveal p.author {
+  color: $slate;
+  font-weight: 600;
+  text-align: center;
+}
+
+.reveal .title-slide .date,
+.reveal p.date {
+  color: $blue;
+  font-weight: 400;
+  text-align: center;
+}
+
+// ---- Body text -----------------------------------------------------
+.reveal p {
+  line-height: 1.35;
+  margin: 0 0 0.4em 0;
+}
+
+.reveal strong,
+.reveal b {
+  font-weight: 700;
+  color: $gt-navy;
+}
+
+.reveal em {
+  font-style: italic;
+  color: $blue;
+}
+
+// ---- Lists — replaces the manual custom-bullets HTML ---------------
+// Native markdown lists now look intentional. No more <ul class> wrappers.
+// Force list-style off at EVERY level — reveal's default theme sets
+// list-style-type: square on nested ul, which caused a double bullet.
+.reveal ul,
+.reveal ul ul,
+.reveal ul ul ul,
+.reveal li ul {
+  list-style: none !important;
+  list-style-type: none !important;
+}
+
+.reveal ul {
+  margin-left: 1.1em;
+  padding-left: 0;
+}
+
+.reveal ul > li {
+  position: relative;
+  padding-left: 1.1em;
+  margin-bottom: 0.3em;
+  line-height: 1.35;
+}
+
+// Level 1: solid gold triangle
+.reveal ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 0; height: 0;
+  border-top: 0.26em solid transparent;
+  border-bottom: 0.26em solid transparent;
+  border-left: 0.4em solid $gt-gold;
+}
+
+// Level 2: open navy square
+.reveal ul ul > li::before {
+  top: 0.5em;
+  border: none;
+  width: 0.3em; height: 0.3em;
+  background: transparent;
+  box-shadow: inset 0 0 0 2px $slate;
+  border-radius: 1px;
+}
+
+// Level 3: small blue dash
+.reveal ul ul ul > li::before {
+  top: 0.62em;
+  border: none;
+  width: 0.4em; height: 2px;
+  background: $blue;
+  box-shadow: none;
+}
+
+.reveal ol {
+  margin-left: 1.2em;
+}
+
+.reveal ul ul,
+.reveal ul ol,
+.reveal ol ul,
+.reveal ol ol {
+  margin-top: 0.3em;
+  margin-left: 1.2em;
+  font-size: 0.95em;   // gentle size step-down reads as hierarchy
+}
+
+// ---- Images — lose the heavy black frame --------------------------
+.reveal section img {
+  margin: 0.6em auto;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 4px 18px rgba(0, 48, 87, 0.14);
+}
+
+.reveal section img.plain {
+  box-shadow: none;
+}
+
+.reveal figure figcaption {
+  font-size: 0.7em;
+  color: $ink-soft;
+  margin-top: 0.3em;
+  text-align: center;
+}
+
+// ---- Links ---------------------------------------------------------
+.reveal a {
+  color: $blue;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(38, 139, 210, 0.35);
+  transition: color .15s ease, border-color .15s ease;
+}
+.reveal a:hover {
+  color: $blue-deep;
+  border-bottom-color: $blue-deep;
+}
+
+// ---- Tables --------------------------------------------------------
+.reveal table {
+  margin: 0.5em auto;
+  border-collapse: collapse;
+  font-size: 0.85em;
+}
+.reveal table th {
+  font-weight: 600;
+  color: $gt-navy;
+  border-bottom: 2px solid $gt-gold;
+  padding: 0.3em 0.6em;
+}
+.reveal table td {
+  padding: 0.28em 0.6em;
+  border-bottom: 1px solid rgba(67, 84, 103, 0.25);
+}
+
+// ---- Code ----------------------------------------------------------
+.reveal pre {
+  box-shadow: 0 2px 12px rgba(0, 48, 87, 0.12);
+  border-radius: 6px;
+  font-size: 0.5em;
+}
+.reveal code {
+  font-family: "Source Code Pro", monospace;
+}
+
+// ---- Blockquote ----------------------------------------------------
+.reveal blockquote {
+  width: 85%;
+  background: $base-panel;
+  border-left: 4px solid $gt-gold;
+  box-shadow: none;
+  font-style: italic;
+  padding: 0.5em 1em;
+  border-radius: 0 4px 4px 0;
+}
+
+// =====================================================================
+// MATH ENVIRONMENTS — theorem / lemma / definition / etc.
+// Styled to work with the Quarto callout approach (see _extensions or
+// the div syntax in the template). These class-based rules also let you
+// keep using ::: {.theorem} fenced divs.
+// =====================================================================
+@mixin mathbox($accent, $label, $fill: $base-panel) {
+  display: block;
+  text-align: left;
+  font-style: italic;             // body text in italic (math convention)
+  background: $fill;
+  border-left: 5px solid $accent;
+  border-radius: 0 5px 5px 0;
+  padding: 0.5em 0.8em;
+  margin: 0.6em 0;
+  box-shadow: 0 2px 10px rgba(0, 48, 87, 0.07);
+
+  &::before {
+    content: $label;
+    display: inline;
+    font-weight: 700;
+    font-style: normal;           // label stays upright
+    font-family: $font-family-sans-serif;
+    color: $accent;
+    margin-right: 0.4em;
+  }
+}
+
+.reveal .theorem     { @include mathbox($blue,     "Theorem."); }
+.reveal .lemma       { @include mathbox($slate,    "Lemma."); }
+.reveal .corollary   { @include mathbox($blue-deep,"Corollary."); }
+.reveal .proposition { @include mathbox($gt-gold,  "Proposition."); }
+.reveal .definition  { @include mathbox($gt-navy,  "Definition."); }
+.reveal .example     { @include mathbox($slate,    "Example.", rgba(67,84,103,0.06)); }
+.reveal .remark      { @include mathbox($gt-gold,  "Remark.",  rgba(179,163,105,0.10)); }
+
+// MathJax renders its own italics; force upright container so display/inline
+// math and code aren't double-slanted inside the italic boxes.
+.reveal .theorem, .reveal .lemma, .reveal .corollary,
+.reveal .proposition, .reveal .definition, .reveal .example, .reveal .remark {
+  .MathJax, mjx-container, code { font-style: normal; }
+}
+.reveal .proof       {
+  display: block; text-align: left; font-style: normal;
+  border-left: 3px dashed $ink-soft; padding-left: 0.8em; margin: 0.5em 0;
+  &::before { content: "Proof."; font-style: italic; font-weight: 600; color: $ink-soft; margin-right: 0.4em; }
+  &::after  { content: "\25A0"; float: right; color: $ink-soft; }
+}
+
+// Named variants:  ::: {.theorem name="Shannon"}
+// Pandoc emits a raw name="..." attribute on the div, so match [name].
+.reveal .theorem[name]::before     { content: "Theorem (" attr(name) ")."; }
+.reveal .lemma[name]::before        { content: "Lemma (" attr(name) ")."; }
+.reveal .corollary[name]::before    { content: "Corollary (" attr(name) ")."; }
+.reveal .proposition[name]::before  { content: "Proposition (" attr(name) ")."; }
+.reveal .definition[name]::before   { content: "Definition (" attr(name) ")."; }
+.reveal .example[name]::before      { content: "Example (" attr(name) ")."; }
+.reveal .remark[name]::before       { content: "Remark (" attr(name) ")."; }
+
+// ---- Footer / logo tidy -------------------------------------------
+.reveal .footer {
+  color: $ink-soft;
+  font-size: 0.5em;
+}
+// Match the logo height to the footer bar (~30px) and sit it in the corner.
+.reveal .slide-logo,
+.reveal img.slide-logo,
+.reveal .slides .slide-logo {
+  height: 30px !important;
+  max-height: 30px !important;
+  width: auto !important;
+  bottom: 6px !important;
+  right: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+// ---- Utility color spans (replaces .bold-blue / .gold) ------------
+.reveal .hl-blue { color: $blue; font-weight: 700; }
+.reveal .hl-gold { color: $gt-gold; font-weight: 600; }
+.reveal .hl-navy { color: $gt-navy; font-weight: 700; }
