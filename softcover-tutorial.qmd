@@ -1,0 +1,1562 @@
+---
+pagetitle: "Soft Covering and Channel Resolvability"
+format:
+  revealjs:
+    theme: [default, itw-theme.scss]
+    css: [itw-extras.css, softcover-extras.css]
+    embed-resources: true
+    width: 1600
+    height: 900
+    margin: 0
+    center: false
+    slide-number: false
+    progress: false
+    controls: false
+    menu: false
+    transition: none
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+    include-in-header:
+      - text: |
+          <script>
+          window.MathJax = {
+            tex: {
+              macros: {
+                indicator: ["\\mathbb{1}", 0],
+                Es: ["\\mathbb{E}_{#1}", 1],
+                V: "\\mathbb{V}",
+                Prob: "\\mathbb{P}",
+                I: "\\mathbb{I}",
+                E: "\\mathbb{E}",
+                D: "\\mathbb{D}",
+                Ch: "\\mathbb{C}",
+                Hent: "\\mathbb{H}",
+                Unif: "\\mathrm{Unif}",
+                SC: "\\mathrm{SC}",
+                enc: "\\mathrm{enc}",
+                dec: "\\mathrm{dec}"
+              }
+            },
+            chtml: {
+              fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2"
+            }
+          };
+          </script>
+    include-after-body:
+      - text: |
+          <div id="gt-chrome-src" hidden
+               data-left="Soft covering and channel resolvability · Tutorial"
+               data-right="Sidong Guo · Georgia Tech"
+               data-watermark="© Georgia Tech 2026 - do not copy or distribute"></div>
+      - file: gt-keynote.html
+---
+
+## {.gt-title}
+
+::: {.t-rule .t-top}
+:::
+
+::: {.t-title}
+Soft Covering and Channel Resolvability
+:::
+
+::: {.t-sub}
+From Random Coding to Covertness, Secure Sensing, Channel Synthesis, and Watermarking
+:::
+
+::: {.t-accent}
+:::
+
+::: {.t-meta}
+[Tutorial · November 2026]{.gold}
+
+[[Sidong Guo]{.presenter}]{.navy}
+
+[School of Electrical and Computer Engineering, Georgia Institute of Technology]{.aff}
+
+[Ph.D. student at Georgia Tech · Visiting Research Fellow at Harvard University]{.aff}
+:::
+
+::: {.t-logo}
+![](img/gatechlogo.jpg)
+:::
+
+::: {.t-rule .t-bot}
+:::
+
+## Overview: [One Lemma, Four Applications]{.sub}
+
+::: {.lead}
+Reliability asks whether a receiver can tell codewords apart. Resolvability asks whether anyone can tell the code from i.i.d. noise.
+:::
+
+::: {style="margin-top:auto;"}
+:::
+
+::: {.map .five}
+::: {.mcol}
+::: {.mbox}
+**Soft covering**
+
+[Part I · the lemma]{.muted}
+:::
+
+::: {.mnote}
+a random codebook of rate $> \I(X;Z)$ makes the channel output look i.i.d.
+:::
+:::
+
+::: {.marrow .fragment fragment-index=1}
+aim at a covert process
+:::
+
+::: {.mcol .fragment fragment-index=1}
+::: {.mbox}
+**Covert communication**
+
+[Part II · Bloch [12]]{.muted}
+:::
+
+::: {.mnote}
+random coding over low-weight sequences; $\Theta(\sqrt n)$ bits hidden in noise
+:::
+:::
+
+::: {.marrow .fragment fragment-index=2}
+the eavesdropper also senses
+:::
+
+::: {.mcol .fragment fragment-index=2}
+::: {.mbox}
+**Secure ISAC**
+
+[Part III · Guo–Bloch [15]]{.muted}
+:::
+
+::: {.mnote}
+resolvability hides the state-dependent codebook from a sensing eavesdropper
+:::
+:::
+
+::: {.marrow .fragment fragment-index=3}
+simulate a joint law
+:::
+
+::: {.mcol .fragment fragment-index=3}
+::: {.mbox}
+**Channel synthesis**
+
+[Part IV · Cuff [5]]{.muted}
+:::
+
+::: {.mnote}
+likelihood encoder + two soft-covering lemmas
+:::
+:::
+
+::: {.marrow .fragment fragment-index=4}
+add encoder state
+:::
+
+::: {.mcol .fragment fragment-index=4}
+::: {.mbox}
+**LLM watermarking**
+
+[Part V · ITW '26 [22]]{.muted}
+:::
+
+::: {.mnote}
+distribution-preserving watermarking is synthesis with state
+:::
+:::
+:::
+
+::: {.fragment fragment-index=5}
+
+::: {.takeaway}
+**One template throughout**: split the codebook index into parts the receiver decodes (packing) and parts that only need to look random (covering).
+:::
+
+:::
+
+::: {style="margin-bottom:auto;"}
+:::
+
+::: {.slide-ref}
+[5] P. Cuff, "Distributed Channel Synthesis," *IEEE Trans. Inf. Theory*, 2013. &nbsp; [12] M. R. Bloch, "Covert Communication over Noisy Channels: A Resolvability Perspective," *IEEE Trans. Inf. Theory*, 2016.<br>
+[15] S. Guo, M. R. Bloch, "Secure Integrated Sensing and Communication against Communication and Sensing Eavesdropping," arXiv:2601.23216, 2026.<br>
+[22] S. Guo, T. Kann, T. Baluta, M. R. Bloch, "Covert Multi-bit LLM Watermarking: An Information Theory and Coding Approach," IEEE ITW, 2026.
+:::
+
+## {}
+
+```{=html}
+<div class="part-mark">
+  <div class="pn">Part I</div>
+  <div class="pt">Soft Covering and Channel Resolvability</div>
+  <div class="pr"></div>
+  <div class="pq">How large must a random codebook be so that its output looks i.i.d.?</div>
+</div>
+```
+
+## Foundations: [Two Questions About One Random Codebook]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input · $Y$: legitimate output · $Z$: observer output]{.vars}
+:::
+
+::: {.statement}
+Codebook $\mathcal C = \{X^n(1), \dots, X^n(M)\}$ drawn i.i.d. from $P_X^{\otimes n}$, $M = 2^{nR}$, one codeword sent through a memoryless channel.
+:::
+
+::: {.pc2}
+::: {}
+[Reliability: packing]{.pt2}
+
+![](img/softcover/sc_packing.png){.fig height="270"}
+
+::: {.figcap2}
+each codeword owns $\approx 2^{n\Hent(Y|X)}$ outputs; disjoint clouds fit<br>$2^{nR}\, 2^{n\Hent(Y|X)} \le 2^{n\Hent(Y)} \;\Rightarrow\; R < \I(X;Y)$
+:::
+:::
+
+::: {.fragment fragment-index=1}
+[Resolvability: covering]{.pt2}
+
+![](img/softcover/sc_covering.png){.fig height="270"}
+
+::: {.figcap2}
+clouds must blanket the $\approx 2^{n\Hent(Z)}$ typical outputs<br>$2^{nR}\, 2^{n\Hent(Z|X)} \ge 2^{n\Hent(Z)} \;\Rightarrow\; R > \I(X;Z)$
+:::
+:::
+:::
+
+::: {.fragment fragment-index=2}
+
+| | reliability | resolvability |
+|:--|:--|:--|
+| question | can the receiver tell codewords apart? | can an observer tell the code from i.i.d. noise? |
+| metric | error probability $\Prob(\hat M \neq M)$ | $\V$ or $\D$ between $P_{Z^n \vert \mathcal C}$ and $Q_Z^{\otimes n}$ |
+| rate | codebook small enough: $R < \I(X;Y)$ | codebook large enough: $R > \I(X;Z)$ |
+: {.kv2}
+
+:::
+
+## Foundations: [Random Coding for Reliability]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input · $Y$: legitimate output · $Z$: observer output]{.vars}
+:::
+
+::: {.lemma name="1 (Shannon [1])"}
+Let $\imath(x;y) \triangleq \log \frac{W_{Y|X}(y|x)}{Q_Y(y)}$ be the information density, $Q_Y = P_X \circ W_{Y|X}$. For $M$ codewords i.i.d. $P_X$ and the threshold decoder "output the unique $m$ with $\imath(x(m);y) > \log M + \gamma$", for every $\gamma > 0$
+$$
+\E_{\mathcal C}[P_e] \;\le\; \Prob\big[\imath(X;Y) \le \log M + \gamma\big] + e^{-\gamma}.
+$$
+:::
+
+::: {.pf .fragment fragment-index=1}
+The sent codeword misses the threshold with probability $\Prob[\imath(X;Y) \le \log M + \gamma]$. A wrong codeword $\bar X$ is independent of $Y$, and a change of measure gives
+$$
+\Prob\big[\imath(\bar X;Y) > \theta\big] = \E_{P_{XY}}\big[e^{-\imath(X;Y)}\, \indicator\{\imath(X;Y) > \theta\}\big] \le e^{-\theta}.
+$$
+A union bound over the $M - 1$ wrong codewords with $\theta = \log M + \gamma$ contributes at most $(M-1)\,e^{-\log M - \gamma} \le e^{-\gamma}$.
+:::
+
+::: {.fragment fragment-index=2}
+
+- **Asymptotics**: $\imath(X^n;Y^n) = \sum_{i} \imath(X_i;Y_i)$ concentrates at $n\I(X;Y)$, so with $\log M = nR$ and $\gamma = n\epsilon$, $\;P_e \to 0$ whenever $R < \I(X;Y) - \epsilon$
+- **Error event**: a *lower* tail of the information density (the codebook is too large to pack)
+
+:::
+
+::: {.slide-ref}
+[1] C. E. Shannon, "Certain Results in Coding Theory for Noisy Channels," *Information and Control*, 1957.
+:::
+
+## Foundations: [Random Coding for Resolvability]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input · $Y$: legitimate output · $Z$: observer output]{.vars}
+:::
+
+```{=html}
+<div class="dg" style="width:1240px;height:228px;">
+<svg viewBox="0 0 1240 228">
+  <defs><marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#44546a"/></marker></defs>
+  <line x1="200" y1="60" x2="418" y2="60" stroke="#44546a" stroke-width="3" marker-end="url(#ahr)"/>
+  <rect x="425" y="28" width="180" height="64" rx="10" fill="#f4f6f9" stroke="#44546a" stroke-width="3"/>
+  <line x1="605" y1="60" x2="698" y2="60" stroke="#44546a" stroke-width="3" marker-end="url(#ahr)"/>
+  <line x1="20" y1="190" x2="126" y2="190" stroke="#44546a" stroke-width="3" marker-end="url(#ahr)"/>
+  <rect x="133" y="158" width="200" height="64" rx="10" fill="rgba(179,163,105,0.22)" stroke="#b3a369" stroke-width="3"/>
+  <line x1="333" y1="190" x2="418" y2="190" stroke="#44546a" stroke-width="3" marker-end="url(#ahr)"/>
+  <rect x="425" y="158" width="180" height="64" rx="10" fill="#f4f6f9" stroke="#44546a" stroke-width="3"/>
+  <line x1="605" y1="190" x2="698" y2="190" stroke="#44546a" stroke-width="3" marker-end="url(#ahr)"/>
+  <path d="M905,60 H935 V190 H905" fill="none" stroke="#b3a369" stroke-width="3"/>
+</svg>
+<div class="lb bx" style="left:95px;top:60px;">ideal</div>
+<div class="lb" style="left:309px;top:36px;">\(X^n \sim P_X^{\otimes n}\)</div>
+<div class="lb" style="left:515px;top:60px;">\(W_{Z|X}^{\otimes n}\)</div>
+<div class="lb lft" style="left:712px;top:60px;">\(Z^n \sim Q_Z^{\otimes n}\)</div>
+<div class="lb" style="left:73px;top:168px;">\(M\)</div>
+<div class="lb mu" style="left:73px;top:212px;">uniform</div>
+<div class="lb" style="left:233px;top:190px;">codebook \(\mathcal C\)</div>
+<div class="lb mu" style="left:233px;top:136px;">\(M\) codewords, i.i.d. \(P_X^{\otimes n}\)</div>
+<div class="lb" style="left:376px;top:166px;">\(X^n(M)\)</div>
+<div class="lb" style="left:515px;top:190px;">\(W_{Z|X}^{\otimes n}\)</div>
+<div class="lb lft" style="left:712px;top:190px;">\(Z^n \sim P_{Z^n|\mathcal C}\)</div>
+<div class="lb gd lft" style="left:952px;top:112px;">close in \(\V\) or \(\D\)?</div>
+<div class="lb mu lft" style="left:952px;top:142px;">with \(M\) as small as possible</div>
+</div>
+```
+
+$$
+P_{Z^n|\mathcal C}(z^n) = \frac{1}{M}\sum_{m=1}^{M} W_{Z|X}^{\otimes n}\big(z^n \mid X^n(m)\big)
+\quad \text{replaces} \quad
+Q_Z^{\otimes n}(z^n) = \sum_{x^n} P_X^{\otimes n}(x^n)\, W_{Z|X}^{\otimes n}(z^n \mid x^n)
+$$
+
+::: {.fragment fragment-index=1}
+
+::: {.definition name="1 (channel resolvability [3, 25])"}
+$R$ is achievable if some $(M_n, n)$ codes have $\limsup_n \frac1n \log M_n \le R$ and $\delta\big(P_{Z^n|\mathcal C_n}, Q_Z^{\otimes n}\big) \to 0$, $\delta \in \{\V, \D\}$; the channel resolvability is the infimum of such $R$. For a DMC [25, Thm. 3.3.7]
+$$
+C_r(W_{Z|X}, P_X) = \min_{P_{\tilde X}:\; P_{\tilde X} \circ W_{Z|X} = Q_Z} \I(\tilde X; \tilde Z),
+\qquad = \I(X;Z) \text{ if } P_X \text{ is the only input that induces } Q_Z.
+$$
+:::
+
+:::
+
+::: {.fragment fragment-index=2}
+
+- **Input law fixed**: the least randomness for a *given* output; the worst input gives Han–Verdú's resolvability, the capacity [3]
+
+:::
+
+::: {.slide-ref}
+[3] T. S. Han, S. Verdú, "Approximation Theory of Output Statistics," *IEEE Trans. Inf. Theory*, 1993. &nbsp; [25] M. R. Bloch, *Information-Theoretic Security*, draft v0.23, 2020, Sec. 3.3, Fig. 3.5.
+:::
+
+## Foundations: [Why $2^{n\I(X;Z)}$ Codewords Cover]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input · $Y$: legitimate output · $Z$: observer output]{.vars}
+:::
+
+:::: {.columns}
+::: {.column width="47%"}
+```{=html}
+<div class="dg" style="width:700px;height:430px;">
+<svg viewBox="0 0 700 430">
+  <defs><marker id="ahv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#44546a"/></marker></defs>
+  <ellipse cx="130" cy="235" rx="105" ry="170" fill="#fbfaf6" stroke="#44546a" stroke-width="3"/>
+  <ellipse cx="440" cy="235" rx="150" ry="180" fill="#fbfaf6" stroke="#44546a" stroke-width="3"/>
+  <circle cx="440" cy="240" r="92" fill="rgba(179,163,105,0.30)" stroke="#b3a369" stroke-width="3"/>
+  <circle cx="440" cy="240" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="497" cy="240" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="468" cy="191" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="412" cy="191" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="383" cy="240" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="412" cy="289" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="468" cy="289" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="516" cy="196" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="364" cy="196" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="364" cy="284" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="440" cy="328" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="516" cy="284" r="37" fill="rgba(58,110,165,0.07)" stroke="#3a6ea5" stroke-width="1.8" stroke-dasharray="6 5"/>
+  <circle cx="440" cy="152" r="37" fill="rgba(58,110,165,0.20)" stroke="#3a6ea5" stroke-width="3"/>
+  <path d="M110,138 Q271,117 430,152" fill="none" stroke="#44546a" stroke-width="2" marker-end="url(#ahv)"/>
+  <path d="M165,150 Q316,142 459,189" fill="none" stroke="#44546a" stroke-width="2" marker-end="url(#ahv)"/>
+  <path d="M80,215 Q229,199 373,239" fill="none" stroke="#44546a" stroke-width="2" marker-end="url(#ahv)"/>
+  <path d="M160,240 Q324,212 487,240" fill="none" stroke="#44546a" stroke-width="2" marker-end="url(#ahv)"/>
+  <path d="M100,305 Q249,269 402,290" fill="none" stroke="#44546a" stroke-width="2" marker-end="url(#ahv)"/>
+  <path d="M175,330 Q337,280 506,285" fill="none" stroke="#44546a" stroke-width="2" marker-end="url(#ahv)"/>
+  <path d="M120,375 Q227,305 354,287" fill="none" stroke="#44546a" stroke-width="2" marker-end="url(#ahv)"/>
+  <path d="M190,200 Q271,170 354,196" fill="none" stroke="#44546a" stroke-width="2" marker-end="url(#ahv)"/>
+  <circle cx="110" cy="138" r="6" fill="#b3a369"/>
+  <circle cx="165" cy="150" r="6" fill="#44546a"/>
+  <circle cx="80" cy="215" r="6" fill="#44546a"/>
+  <circle cx="160" cy="240" r="6" fill="#44546a"/>
+  <circle cx="100" cy="305" r="6" fill="#44546a"/>
+  <circle cx="175" cy="330" r="6" fill="#44546a"/>
+  <circle cx="120" cy="375" r="6" fill="#44546a"/>
+  <circle cx="190" cy="200" r="6" fill="#44546a"/>
+  <line x1="440" y1="34" x2="440" y2="113" stroke="#3a6ea5" stroke-width="2"/>
+  <line x1="598" y1="240" x2="534" y2="240" stroke="#8a7a3c" stroke-width="2"/>
+</svg>
+<div class="lb" style="left:52px;top:398px;">\(\mathcal X^n\)</div>
+<div class="lb" style="left:575px;top:400px;">\(\mathcal Z^n\)</div>
+<div class="lb gd" style="left:112px;top:113px;">\(x^n(m)\)</div>
+<div class="lb bl" style="left:440px;top:20px;">cloud of \(x^n(m)\): \(\approx 2^{n\Hent(Z|X)}\)</div>
+<div class="lb gd lft" style="left:602px;top:226px;">typical set</div>
+<div class="lb gd lft" style="left:602px;top:254px;">\(\approx 2^{n\Hent(Z)}\)</div>
+</div>
+```
+
+::: {.figcap2}
+Redrawn from [25, Fig. 3.6]: dots are codewords, dashed discs their conditionally typical clouds, the shaded disc the typical set of $Q_Z^{\otimes n}$
+:::
+:::
+
+::: {.column width="53%"}
+- **Target**: by the AEP, $Q_Z^{\otimes n}$ is nearly uniform on its typical set, $\approx 2^{n\Hent(Z)}$ sequences
+- **One codeword**: $W_{Z|X}^{\otimes n}(\cdot \mid x^n(m))$ is nearly uniform on a cloud of $\approx 2^{n\Hent(Z|X)}$ sequences
+- **Counting**: the clouds blanket the typical set only if $M \gtrsim 2^{n\Hent(Z)}/2^{n\Hent(Z|X)} = 2^{n\I(X;Z)}$
+
+::: {.fragment fragment-index=1}
+- **Why "soft"**: a typical $z^n$ lies in $N(z^n) \sim \mathrm{Bin}\big(M, 2^{-n\I(X;Z)}\big)$ clouds, and $P_{Z^n|\mathcal C}(z^n) \approx N(z^n)\, 2^{-n\Hent(Z|X)}/M$, so
+$$
+\frac{\mathrm{std}\; P_{Z^n|\mathcal C}(z^n)}{Q_Z^{\otimes n}(z^n)} \approx \frac{1}{\sqrt{\E N(z^n)}} = \sqrt{\frac{2^{n\I(X;Z)}}{M}}
+$$
+:::
+
+::: {.fragment fragment-index=2}
+- **Same threshold, stronger demand** than the covering lemma of lossy compression: every typical output must be hit by *exponentially many* clouds so that $N(z^n)$ concentrates, not merely by one
+:::
+:::
+::::
+
+::: {.slide-ref}
+[25] M. R. Bloch, *Information-Theoretic Security: A Unified Treatment of Information-Theoretic Primitives and Algorithms*, draft v0.23, 2020, Sec. 3.3.2.
+:::
+
+## Foundations: [Soft Covering, Visually]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input · $Y$: legitimate output · $Z$: observer output]{.vars}
+:::
+
+![](img/softcover/sc_blanket.png){.fig .nostretch width="1240"}
+
+::: {.figcap2}
+Toy picture on the unit torus: each codeword spreads a noise cloud; the mixture of $M$ clouds flattens toward the target as $M$ grows.
+:::
+
+::: {.fragment fragment-index=1}
+
+- **Fluctuation term, measured**: from $M = 32$ on, each $8\times$ more codewords cuts the TV by roughly $\sqrt 8 \approx 2.8$, the $1/\sqrt M$ law predicted by the cloud count
+- **Why it matters**: an observer who cannot tell the code from i.i.d. noise learns nothing about the index (secrecy) or about whether anything was sent (covertness), and sees the target law (synthesis)
+
+:::
+
+## Foundations: [A One-Shot Lemma for Resolvability]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$\imath(x;z) = \log \frac{W_{Z|X}(z|x)}{Q_Z(z)}$ · $\mathcal C_\gamma = \{\imath \le \gamma\}$]{.vars}
+:::
+
+::: {.lemma name="2 (random coding for resolvability [5, 25])"}
+Any $P_X$ and $W_{Z|X}$ (one channel use, arbitrary alphabets); $M$ codewords i.i.d. $P_X$, used uniformly; typical pairs $\mathcal C_\gamma \triangleq \{(x,z): \imath(x;z) \le \gamma\}$. For every $\gamma > 0$,
+$$
+\begin{aligned}
+\text{(a)}\quad \E_{\mathcal C}\, \V\big(P_{Z|\mathcal C}, Q_Z\big) &\le \Prob\big[(X,Z) \notin \mathcal C_\gamma\big] + \tfrac12\sqrt{e^\gamma/M},\\
+\text{(b)}\quad \E_{\mathcal C}\, \D\big(P_{Z|\mathcal C} \,\|\, Q_Z\big) &\le \Prob\big[(X,Z) \notin \mathcal C_\gamma\big]\, \log\big(1/\mu_Z + 1\big) + e^\gamma/M,
+\qquad \mu_Z \triangleq \min_{z \in \mathrm{supp}\, Q_Z} Q_Z(z).
+\end{aligned}
+$$
+:::
+
+::: {.pf .compact .fragment fragment-index=1}
+**(a)** Every codeword simulates the target on average, $\E[W_{Z|X}(z|X_m)] = Q_Z(z)$, so $\E P_{Z|\mathcal C} = Q_Z$. Split each cloud at the threshold, $P_{Z|\mathcal C} = P^{(1)} + P^{(2)}$, where $P^{(1)}(z) = \frac1M\sum_m W_{Z|X}(z|X_m)\,\indicator\{(X_m,z) \notin \mathcal C_\gamma\}$ keeps the atypical pairs and $P^{(2)}$ the typical ones. By the triangle inequality,
+$$
+\E\,\V \le \tfrac12\textstyle\sum_z \E\big|P^{(1)}(z) - \E P^{(1)}(z)\big| + \tfrac12\sum_z \E\big|P^{(2)}(z) - \E P^{(2)}(z)\big|.
+$$
+*Atypical part*: $\frac12\E|A - \E A| \le \E A$ for $A \ge 0$, so the first sum is at most $\sum_z \E P^{(1)}(z) = \Prob[(X,Z) \notin \mathcal C_\gamma]$.
+
+*Typical part*: $\E|A - \E A| \le \sqrt{\mathrm{Var}\,A}$ (Jensen), and on $\mathcal C_\gamma$ we have $W_{Z|X}(z|x) \le e^\gamma Q_Z(z)$, so
+$$
+\mathrm{Var}\,P^{(2)}(z) \le \tfrac1M\,\E\big[W_{Z|X}(z|X)^2\,\indicator\{(X,z) \in \mathcal C_\gamma\}\big] \le \tfrac{e^\gamma}{M}\, Q_Z(z)\, \E\big[W_{Z|X}(z|X)\big] = \tfrac{e^\gamma}{M}\, Q_Z(z)^2,
+$$
+and the second sum is at most $\frac12\sum_z \sqrt{e^\gamma/M}\; Q_Z(z) = \frac12\sqrt{e^\gamma/M}$.
+:::
+
+::: {.slide-ref}
+[5] P. Cuff, "Distributed Channel Synthesis," *IEEE Trans. Inf. Theory*, 2013. &nbsp; [25] M. R. Bloch, *Information-Theoretic Security*, draft v0.23, 2020, Lemmas 3.3.2 and 3.3.3.
+:::
+
+## Foundations: [One-Shot Lemma: The Divergence Bound]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$\imath(x;z) = \log \frac{W_{Z|X}(z|x)}{Q_Z(z)}$ · $\mathcal C_\gamma = \{\imath \le \gamma\}$]{.vars}
+:::
+
+::: {.pf}
+**(b)** By symmetry, codeword $X_1$ is sent, so $Z \sim W_{Z|X}(\cdot \mid X_1)$ and
+$\;\E_{\mathcal C}\, \D(P_{Z|\mathcal C} \,\|\, Q_Z) = \E\Big[\log \frac{1}{M}\sum_{m=1}^{M} e^{\imath(X_m;Z)}\Big]$.
+
+*Jensen* over $X_2, \dots, X_M$, which are independent of $(X_1, Z)$ and satisfy $\E\big[e^{\imath(X_m;Z)} \mid Z\big] = 1$:
+$$
+\E_{\mathcal C}\, \D(P_{Z|\mathcal C} \,\|\, Q_Z) \le \E\Big[\log\Big(\frac{e^{\imath(X_1;Z)}}{M} + \frac{M-1}{M}\Big)\Big] \le \E\Big[\log\Big(1 + \frac{e^{\imath(X;Z)}}{M}\Big)\Big]. \qquad (\star)
+$$
+*Split* $(\star)$ on $\mathcal C_\gamma$: on typical pairs, $\log(1 + e^{\gamma}/M) \le e^\gamma/M$; on atypical pairs, $e^{\imath} = W_{Z|X}/Q_Z \le 1/\mu_Z$, so the integrand is at most $\log(1/\mu_Z + 1)$.
+:::
+
+::: {.fragment fragment-index=1}
+
+- **Caveat** [25]: the bound is void when $\mu_Z = 0$ (e.g., Gaussian outputs); working directly with $(\star)$ avoids $\mu_Z$
+- **Exponent from $(\star)$** [4]: $\log(1 + x) \le x^s/s$ for $s \in (0, 1]$, and $\E\big[e^{s\,\imath(X;Z)}\big] = e^{s\,\D_{1+s}(P_{XZ}\|P_X Q_Z)}$ is multiplicative over letters, so
+$$
+\E_{\mathcal C}\, \D\big(P_{Z^n|\mathcal C} \,\big\|\, Q_Z^{\otimes n}\big) \le \frac{1}{s}\exp\Big(-ns\big[R - \D_{1+s}(P_{XZ} \| P_X Q_Z)\big]\Big) \longrightarrow 0
+\quad \text{if } R > \I(X;Z),
+$$
+since the Rényi divergence $\D_{1+s} \downarrow \I(X;Z)$ as $s \downarrow 0$
+
+:::
+
+::: {.slide-ref}
+[4] M. Hayashi, "General Nonasymptotic and Asymptotic Formulas in Channel Resolvability and Identification Capacity and Their Application to the Wiretap Channel," *IEEE Trans. Inf. Theory*, 2006. &nbsp; [25] M. R. Bloch, *Information-Theoretic Security*, draft v0.23, 2020, Lemma 3.3.3, Prop. 3.3.8.
+:::
+
+## Foundations: [The Soft-Covering Lemma]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$\imath(x;z) = \log \frac{W_{Z|X}(z|x)}{Q_Z(z)}$]{.vars}
+:::
+
+::: {.corollary name="1 (soft covering [2–5, 25])"}
+Let $\mathcal C = \{X^n(m)\}_{m=1}^{M}$, $M = e^{nR}$, be i.i.d. $P_X^{\otimes n}$, sent through a DMC $W_{Z|X}$ with $Q_Z = P_X \circ W_{Z|X}$. If $R > \I(X;Z)$, then for some $\beta > 0$
+$$
+\E_{\mathcal C}\, \D\big(P_{Z^n|\mathcal C} \,\big\|\, Q_Z^{\otimes n}\big) \le e^{-n\beta}
+\qquad \text{and} \qquad
+\E_{\mathcal C}\, \V\big(P_{Z^n|\mathcal C}, Q_Z^{\otimes n}\big) \le e^{-n\beta}.
+$$
+:::
+
+::: {.pf .fragment fragment-index=1}
+Apply Lemma 2 to $\big(P_X^{\otimes n}, W_{Z|X}^{\otimes n}\big)$ with $\gamma = n(\I(X;Z) + \epsilon)$ and $R > \I(X;Z) + \epsilon$. The density $\imath(X^n;Z^n) = \sum_i \imath(X_i;Z_i)$ is a sum of i.i.d. bounded terms with mean $\I(X;Z)$, so $\Prob[\imath(X^n;Z^n) > \gamma] \le e^{-2n\epsilon^2/b^2}$ by Hoeffding ($b$: range of $\imath$). Also $e^\gamma/M = e^{-n(R - \I(X;Z) - \epsilon)}$, and $\log(1/\mu_Z^n + 1) \le n\log(1/\mu_Z) + 1$ grows only linearly.
+:::
+
+::: {.fragment fragment-index=2}
+
+```{=html}
+<table class="kv2">
+  <thead><tr><th></th><th>Reliability, Lemma 1</th><th>Resolvability, Lemma 2(a)</th></tr></thead>
+  <tbody>
+    <tr><td>codebook</td><td>small enough that clouds are disjoint</td><td>large enough that clouds overlap many times</td></tr>
+    <tr><td>one-shot bound</td><td>\(\Prob[\imath(X;Y) \le \log M + \gamma] + e^{-\gamma}\)</td><td>\(\Prob[\imath(X;Z) \gt \log M - \gamma] + \tfrac12 e^{-\gamma/2}\) &nbsp;(threshold \(\log M - \gamma\))</td></tr>
+    <tr><td>failure</td><td>lower tail of \(\imath\) reaches \(\log M\)</td><td>upper tail of \(\imath\) reaches \(\log M\)</td></tr>
+    <tr><td>\(n\) letters</td><td>\(R \lt \I(X;Y)\)</td><td>\(R \gt \I(X;Z)\), optimal by the converse [25, Prop. 3.3.5]</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: {.slide-ref}
+[2] A. D. Wyner, "The Common Information of Two Dependent Random Variables," *IEEE Trans. Inf. Theory*, 1975. &nbsp; [3] T. S. Han, S. Verdú, "Approximation Theory of Output Statistics," *IEEE Trans. Inf. Theory*, 1993.<br>
+[4] M. Hayashi, *IEEE Trans. Inf. Theory*, 2006. &nbsp; [5] P. Cuff, *IEEE Trans. Inf. Theory*, 2013. &nbsp; [25] M. R. Bloch, *Information-Theoretic Security*, draft v0.23, 2020, Prop. 3.3.4.
+:::
+
+## Foundations: [Soft Covering on a Binary Symmetric Channel]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input · $Y$: legitimate output · $Z$: observer output]{.vars}
+:::
+
+:::: {.columns}
+::: {.column width="58%"}
+![](img/softcover/sc_bsc_tv.png){.fig width="880"}
+:::
+
+::: {.column width="42%"}
+- **Setup**: $X^n$ uniform on $\{0,1\}^n$, BSC with crossover $0.11$, so $\I(X;Z) = 0.50$ bit and $Q_Z^{\otimes n}$ is uniform
+
+::: {.fragment fragment-index=1}
+- **Exact computation**: $P_{Z^n|\mathcal C}$ is the empirical codeword law convolved with the noise, computed with a Walsh–Hadamard transform for $n \le 24$, averaged over random codebooks
+:::
+
+::: {.fragment fragment-index=2}
+- **Threshold at $\I(X;Z)$**, as Corollary 1 predicts: below it TV $\to 1$, above it TV $\to 0$; the curves cross near $R = \I(X;Z)$ and steepen as $n$ grows, with transition width $\propto 1/\sqrt{n}$ (the spread of $\imath(X^n;Z^n)$, the first term of Lemma 2)
+:::
+:::
+::::
+
+## Foundations: [Refinements Used Later]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$\imath(x;z) = \log \frac{W_{Z|X}(z|x)}{Q_Z(z)}$]{.vars}
+:::
+
+```{=html}
+<table class="kv2">
+  <thead><tr><th>Refinement</th><th>Statement</th><th>Used in</th></tr></thead>
+  <tbody>
+    <tr><td>low weight [12]</td><td>Lemma 2(b) with target \(Q_{\alpha_n}^{\otimes n}\); \(\imath\) concentrates at scale \(n\alpha_n\) instead of \(n\)</td><td>covert communication (Part II)</td></tr>
+    <tr><td>exponents [4, 7, 8]</td><td>\(\E\D \le \tfrac1s e^{-ns[R - \D_{1+s}(P_{XZ}\Vert P_X Q_Z)]}\); exact TV exponent \(E_{\SC}\) [8]</td><td>secure ISAC (Part III)</td></tr>
+    <tr><td>high probability [6]</td><td>\(\Prob_{\mathcal C}\big[\V \gt \E\V + t\big] \le e^{-2Mt^2}\): doubly exponential in \(n\)</td><td>semantic secrecy, watermarking (Part V)</td></tr>
+    <tr><td>indexed codebooks [5]</td><td>codewords \(u^n(m,k)\); cover with all indices, or with one row \(k\)</td><td>synthesis (IV), watermarking (V)</td></tr>
+  </tbody>
+</table>
+```
+
+::: {.fragment fragment-index=1}
+
+- **High probability** [6]: replacing one codeword moves $\V$ by at most $1/M$, so McDiarmid's inequality [9] gives
+$$
+\Prob_{\mathcal C}\Big[\V\big(P_{Z^n|\mathcal C}, Q_Z^{\otimes n}\big) > \E_{\mathcal C}\V + t\Big] \le e^{-2Mt^2}
+\qquad \big(M = e^{nR},\; t = e^{-n\gamma'}:\; \text{doubly exponential}\big)
+$$
+    - a union bound over exponentially many messages or states keeps **one** codebook good for **every** index: semantic secrecy
+
+:::
+
+::: {.slide-ref}
+[4] M. Hayashi, *IEEE Trans. Inf. Theory*, 2006. &nbsp; [5] P. Cuff, "Distributed Channel Synthesis," *IEEE Trans. Inf. Theory*, 2013. &nbsp; [6] P. Cuff, "A Stronger Soft-Covering Lemma and Applications," IEEE CNS Workshops, 2015.<br>
+[7] M. B. Parizi, E. Telatar, N. Merhav, *IEEE Trans. Inf. Theory*, 2017. &nbsp; [8] S. Yagli, P. Cuff, "Exact Soft-Covering Exponent," *IEEE Trans. Inf. Theory*, 2019. &nbsp; [9] C. McDiarmid, "On the Method of Bounded Differences," 1989. &nbsp; [12] M. R. Bloch, *IEEE Trans. Inf. Theory*, 2016.
+:::
+
+## Foundations: [From Resolvability to Secrecy by Splitting the Index]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{.on} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input · $Y$: legitimate output · $Z$: observer output]{.vars}
+:::
+
+:::: {.columns}
+::: {.column width="44%"}
+```{=html}
+<div class="dg" style="width:620px;height:340px;">
+<svg viewBox="0 0 620 340">
+  <g fill="#44546a">
+    <circle cx="120" cy="80" r="8"/><circle cx="180" cy="80" r="8"/><circle cx="240" cy="80" r="8"/><circle cx="300" cy="80" r="8"/><circle cx="360" cy="80" r="8"/><circle cx="420" cy="80" r="8"/><circle cx="480" cy="80" r="8"/><circle cx="540" cy="80" r="8"/>
+    <circle cx="120" cy="132" r="8"/><circle cx="180" cy="132" r="8"/><circle cx="240" cy="132" r="8"/><circle cx="300" cy="132" r="8"/><circle cx="360" cy="132" r="8"/><circle cx="420" cy="132" r="8"/><circle cx="480" cy="132" r="8"/><circle cx="540" cy="132" r="8"/>
+    <circle cx="120" cy="184" r="8"/><circle cx="180" cy="184" r="8"/><circle cx="240" cy="184" r="8"/><circle cx="300" cy="184" r="8"/><circle cx="360" cy="184" r="8"/><circle cx="420" cy="184" r="8"/><circle cx="480" cy="184" r="8"/><circle cx="540" cy="184" r="8"/>
+    <circle cx="120" cy="236" r="8"/><circle cx="180" cy="236" r="8"/><circle cx="240" cy="236" r="8"/><circle cx="300" cy="236" r="8"/><circle cx="360" cy="236" r="8"/><circle cx="420" cy="236" r="8"/><circle cx="480" cy="236" r="8"/><circle cx="540" cy="236" r="8"/>
+    <circle cx="120" cy="288" r="8"/><circle cx="180" cy="288" r="8"/><circle cx="240" cy="288" r="8"/><circle cx="300" cy="288" r="8"/><circle cx="360" cy="288" r="8"/><circle cx="420" cy="288" r="8"/><circle cx="480" cy="288" r="8"/><circle cx="540" cy="288" r="8"/>
+  </g>
+  <g class="fragment" data-fragment-index="1"><rect x="96" y="110" width="468" height="44" rx="12" fill="rgba(179,163,105,0.28)" stroke="#b3a369" stroke-width="3"/></g>
+  <g class="fragment" data-fragment-index="2"><rect x="88" y="52" width="484" height="264" rx="14" fill="none" stroke="#44546a" stroke-width="3.5"/></g>
+</svg>
+<div class="lb mu" style="left:330px;top:24px;">local randomness \(r\), rate \(R'\)</div>
+<div class="lb mu" style="left:44px;top:184px;transform:translate(-50%,-50%) rotate(-90deg);">message \(m\), rate \(R\)</div>
+</div>
+```
+:::
+
+::: {.column width="56%"}
+- **Wiretap channel** [10]: Bob sees $Y$, Eve sees $Z$; index the codebook by $(m, r)$, with $r$ uniform and known to nobody
+
+::: {.fragment fragment-index=1}
+- [**Row $m$ is covered**]{.hl-gold}: $2^{nR'}$ codewords with $R' > \I(X;Z)$, so $P_{Z^n|M=m} \approx Q_Z^{\otimes n}$ for every $m$ and
+$$
+\I(M;Z^n) \le \E_M\, \D\big(P_{Z^n|M} \,\big\|\, Q_Z^{\otimes n}\big) \le e^{-n\beta}
+$$
+:::
+
+::: {.fragment fragment-index=2}
+- [**The grid is decoded**]{.hl-navy}: $R + R' < \I(X;Y)$, so Bob recovers $(m, r)$
+- **Strong secrecy** at every $R < \I(X;Y) - \I(X;Z)$ [11]
+:::
+:::
+::::
+
+::: {.fragment fragment-index=3}
+
+::: {.takeaway}
+**Index splitting**: some indices are decoded, some are only covered. Every application in this tutorial is a choice of which indices play which role.
+:::
+
+:::
+
+::: {.slide-ref}
+[10] A. D. Wyner, "The Wire-Tap Channel," *Bell Syst. Tech. J.*, 1975. &nbsp; [11] M. R. Bloch, J. N. Laneman, "Strong Secrecy From Channel Resolvability," *IEEE Trans. Inf. Theory*, 2013.
+:::
+
+## {}
+
+```{=html}
+<div class="part-mark">
+  <div class="pn">Part II</div>
+  <div class="pt">Covert Communication</div>
+  <div class="pr"></div>
+  <div class="pq">Resolvability with codewords of vanishing weight</div>
+</div>
+```
+
+## Covert Communication: [Model and the Square-Root Law]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{.on} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input, $0$ = innocent · $Y$: Bob · $Z$: Willie]{.vars}
+:::
+
+:::: {.columns}
+::: {.column width="52%"}
+```{=html}
+<div class="dg" style="width:780px;height:330px;">
+<svg viewBox="0 0 780 330">
+  <defs><marker id="ahc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#44546a"/></marker>
+  <marker id="ahcg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#b3a369"/></marker></defs>
+  <line x1="8" y1="185" x2="55" y2="185" stroke="#44546a" stroke-width="3" marker-end="url(#ahc)"/>
+  <rect x="60" y="145" width="140" height="80" rx="10" fill="#fff" stroke="#44546a" stroke-width="3"/>
+  <line x1="200" y1="185" x2="295" y2="185" stroke="#44546a" stroke-width="3" marker-end="url(#ahc)"/>
+  <rect x="300" y="140" width="170" height="90" rx="10" fill="#f4f6f9" stroke="#44546a" stroke-width="3"/>
+  <polyline points="470,165 520,165 520,95 595,95" fill="none" stroke="#44546a" stroke-width="3" marker-end="url(#ahc)"/>
+  <rect x="600" y="60" width="165" height="70" rx="10" fill="#fff" stroke="#44546a" stroke-width="3"/>
+  <polyline points="470,205 520,205 520,275 595,275" fill="none" stroke="#44546a" stroke-width="3" marker-end="url(#ahc)"/>
+  <rect x="600" y="240" width="165" height="70" rx="10" fill="#fff" stroke="#b03a2e" stroke-width="3"/>
+  <polyline points="130,142 130,30 682,30 682,57" fill="none" stroke="#b3a369" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#ahcg)"/>
+</svg>
+<div class="lb" style="left:24px;top:164px;">\(M\)</div>
+<div class="lb bx" style="left:130px;top:185px;">Alice</div>
+<div class="lb" style="left:248px;top:164px;">\(X^n\)</div>
+<div class="lb" style="left:385px;top:185px;">\(W_{YZ|X}\)</div>
+<div class="lb" style="left:556px;top:76px;">\(Y^n\)</div>
+<div class="lb bx" style="left:682px;top:84px;">Bob</div>
+<div class="lb mu" style="left:682px;top:110px;">decodes \(\hat M\)</div>
+<div class="lb" style="left:556px;top:256px;">\(Z^n\)</div>
+<div class="lb bx" style="left:682px;top:262px;color:#b03a2e;">Willie</div>
+<div class="lb mu" style="left:682px;top:290px;">is Alice talking?</div>
+<div class="lb gd" style="left:400px;top:12px;">secret key \(K\)</div>
+</div>
+```
+:::
+
+::: {.column width="48%"}
+- **Binary input**, $x = 0$ is the innocent symbol; $P_x \triangleq W_{Y|X=x}$ at Bob, $Q_x \triangleq W_{Z|X=x}$ at Willie
+- **Covertness**: Willie's code-induced law $\widehat Q^n$ satisfies $\D\big(\widehat Q^n \,\big\|\, Q_0^{\otimes n}\big) \le \delta$, so every test has
+$$
+P_{\mathrm{FA}} + P_{\mathrm{MD}} \ge 1 - \sqrt{\delta/2}
+$$
+- **Square-root law**: only $\log M = \Theta(\sqrt n)$ covert bits [12–14]
+:::
+::::
+
+::: {.fragment fragment-index=1}
+
+- **Why fixed-composition random coding fails**: i.i.d. codewords with $P_X(1) = \alpha$ fixed make Willie see $\approx Q_\alpha^{\otimes n}$, $Q_\alpha = (1-\alpha)Q_0 + \alpha Q_1$, and $\D(Q_\alpha^{\otimes n} \| Q_0^{\otimes n}) = n\,\D(Q_\alpha\|Q_0) \to \infty$
+- **Fix: vanishing weight**. Since $\D(Q_\alpha\|Q_0) = \frac{\alpha^2}{2}\chi^2(Q_1\|Q_0) + O(\alpha^3)$, the choice $\alpha_n = \sqrt{2\delta / (n\,\chi^2(Q_1\|Q_0))}$ keeps $n\,\D(Q_{\alpha_n}\|Q_0) \to \delta$
+
+:::
+
+::: {.slide-ref}
+[12] M. R. Bloch, "Covert Communication over Noisy Channels: A Resolvability Perspective," *IEEE Trans. Inf. Theory*, 2016. &nbsp; [13] B. A. Bash, D. Goeckel, D. Towsley, "Limits of Reliable Communication with Low Probability of Detection on AWGN Channels," *IEEE JSAC*, 2013.<br>
+[14] L. Wang, G. W. Wornell, L. Zheng, "Fundamental Limits of Communication with Low Probability of Detection," *IEEE Trans. Inf. Theory*, 2016.
+:::
+
+## Covert Communication: [Weight Must Vanish Like $1/\sqrt{n}$]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{.on} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input, $0$ = innocent · $Y$: Bob · $Z$: Willie]{.vars}
+:::
+
+![](img/softcover/covert_sqrt.png){.fig width="960"}
+
+::: {.figcap2}
+Willie: BSC(0.2) from the innocent symbol, $\chi^2(Q_1\|Q_0) = 2.25$; Bob: BSC(0.05); $\delta = 0.05$. Left: relative entropy at Willie. Right: covert bits from Theorem 1.
+:::
+
+::: {.fragment fragment-index=1}
+
+![](img/softcover/lowweight.svg){.strips}
+
+::: {.figcap2}
+Random coding over **low-weight sequences**: codewords drawn i.i.d. from $\Pi_{\alpha_n}^{\otimes n}$, $\Pi_\alpha = \mathrm{Bernoulli}(\alpha)$, shown for $n = 64$ (counts on the right).
+:::
+
+:::
+
+## Covert Communication: [The Resolvability Perspective]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{.on} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$X$: input, $0$ = innocent · $Y$: Bob · $Z$: Willie]{.vars}
+:::
+
+:::: {.columns}
+::: {.column width="40%"}
+```{=html}
+<div class="dg" style="width:600px;height:400px;">
+<svg viewBox="0 0 600 400">
+  <g class="fragment" data-fragment-index="1"><line x1="340" y1="104" x2="460" y2="296" stroke="#b3a369" stroke-width="5"/></g>
+  <g class="fragment" data-fragment-index="2"><line x1="140" y1="296" x2="260" y2="104" stroke="#3a6ea5" stroke-width="5"/></g>
+  <g class="fragment" data-fragment-index="3"><line x1="207" y1="330" x2="393" y2="330" stroke="#44546a" stroke-width="4" stroke-dasharray="10 7"/></g>
+  <rect x="15" y="298" width="190" height="64" rx="10" fill="#fff" stroke="#44546a" stroke-width="3"/>
+  <rect x="205" y="38" width="190" height="64" rx="10" fill="#f7f3e6" stroke="#b3a369" stroke-width="3"/>
+  <rect x="395" y="298" width="190" height="64" rx="10" fill="#f4f6f9" stroke="#44546a" stroke-width="3"/>
+</svg>
+<div class="lb" style="left:110px;top:320px;">\(\widehat Q^{n}\)</div>
+<div class="lb mu" style="left:110px;top:347px;">code-induced</div>
+<div class="lb" style="left:300px;top:60px;">\(Q_{\alpha_n}^{\otimes n}\)</div>
+<div class="lb mu" style="left:300px;top:87px;">covert process</div>
+<div class="lb" style="left:490px;top:320px;">\(Q_0^{\otimes n}\)</div>
+<div class="lb mu" style="left:490px;top:347px;">innocent</div>
+<div class="lb gd lft fragment" data-fragment-index="1" style="left:412px;top:190px;">\(n\,\D(Q_{\alpha_n}\Vert Q_0) \approx \delta\)</div>
+<div class="lb bl rgt fragment" data-fragment-index="2" style="left:188px;top:190px;">resolvability<br>\(\D(\widehat Q^n\Vert Q_{\alpha_n}^{\otimes n}) \to 0\)</div>
+<div class="lb fragment" data-fragment-index="3" style="left:300px;top:385px;">covert: \(\D(\widehat Q^n\Vert Q_0^{\otimes n}) \le \delta + o(1)\)</div>
+</div>
+```
+:::
+
+::: {.column width="60%"}
+- **Aim at the covert process** $Q_{\alpha_n}^{\otimes n}$ instead of $Q_0^{\otimes n}$ directly
+
+::: {.fragment fragment-index=1}
+- [**Step 1 (no coding)**]{.hl-gold}: $\alpha_n$ sets $\D(Q_{\alpha_n}^{\otimes n}\|Q_0^{\otimes n}) = n\,\D(Q_{\alpha_n}\|Q_0) \to \delta$
+:::
+
+::: {.fragment fragment-index=2}
+- [**Step 2 (soft covering)**]{.hl-blue}: low-weight random codes make $\widehat Q^n \approx Q_{\alpha_n}^{\otimes n}$
+:::
+
+::: {.fragment fragment-index=3}
+- **Glue: an exact identity**
+$$
+\begin{aligned}
+\D(\widehat Q^n\|Q_0^{\otimes n}) &= \D(Q_{\alpha_n}^{\otimes n}\|Q_0^{\otimes n}) + \D(\widehat Q^n\|Q_{\alpha_n}^{\otimes n}) \\
+&\quad + \textstyle\sum_{z^n}\big(\widehat Q^n - Q_{\alpha_n}^{\otimes n}\big)\log\frac{Q_{\alpha_n}^{\otimes n}}{Q_0^{\otimes n}}
+\end{aligned}
+$$
+    - the last sum is at most $2\V(\widehat Q^n, Q_{\alpha_n}^{\otimes n}) \cdot O(n\alpha_n)$, since each letter of $\log\frac{Q_{\alpha}}{Q_0} = \log\big(1 + \alpha(\frac{Q_1}{Q_0} - 1)\big)$ is $O(\alpha)$
+    - so step 2 must make the TV $o(1/(n\alpha_n)) = o(1/\sqrt n)$, which an exponent in $\sqrt n$ delivers
+:::
+:::
+::::
+
+## Covert Communication: [Information Densities at Low Weight]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{.on} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$\Pi_\alpha = \mathrm{Bernoulli}(\alpha)$ · $Q_\alpha = (1-\alpha)Q_0 + \alpha Q_1$]{.vars}
+:::
+
+- **An exact identity** for mutual information at weight $\alpha$:
+$$
+\I(\Pi_\alpha, W_{Z|X}) = \sum_x \Pi_\alpha(x)\, \D(Q_x \| Q_\alpha) = \alpha\,\D(Q_1\|Q_0) - \D(Q_\alpha\|Q_0) = \alpha\,\D(Q_1\|Q_0) + O(\alpha^2)
+$$
+    - *proof*: write $\log\frac{Q_x}{Q_\alpha} = \log\frac{Q_x}{Q_0} - \log\frac{Q_\alpha}{Q_0}$ and average; likewise $\I(\Pi_\alpha, W_{Y|X}) = \alpha\,\D(P_1\|P_0) + O(\alpha^2)$ at Bob
+
+::: {.fragment fragment-index=1}
+
+- **The information density** $\;\imath_\alpha(X^n;Z^n) = \sum_{i=1}^n \log\frac{Q_{X_i}(Z_i)}{Q_\alpha(Z_i)}\;$ with $X^n \sim \Pi_{\alpha_n}^{\otimes n}$
+    - mean $\;n\alpha_n\D(Q_1\|Q_0)\,(1 + o(1)) = \Theta(\sqrt n)$, variance $O(n\alpha_n)$, bounded summands when $Q_1 \ll Q_0$
+
+:::
+
+::: {.fragment fragment-index=2}
+
+- **Consequence**: the law of large numbers at scale $n$ is useless; Bernstein's inequality gives tails $e^{-c\, n\alpha_n} = e^{-c'\sqrt n}$
+    - every rate is measured in units of $n\alpha_n = \sqrt{2n\delta / \chi^2(Q_1\|Q_0)}$, and every exponent is in $\sqrt n$
+
+:::
+
+::: {.fragment fragment-index=3}
+
+::: {.takeaway}
+Lemmas 1 and 2 carry over unchanged; only the concentration step is rescaled from $n$ to $n\alpha_n$.
+:::
+
+:::
+
+## Covert Communication: [Resolvability over Low-Weight Sequences]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{.on} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$\Pi_\alpha = \mathrm{Bernoulli}(\alpha)$ · $Q_\alpha = (1-\alpha)Q_0 + \alpha Q_1$]{.vars}
+:::
+
+::: {.lemma name="3 (low-weight soft covering, cf. [12])"}
+Let the $MK$ codewords be i.i.d. $\Pi_{\alpha_n}^{\otimes n}$ with $\alpha_n \to 0$ and $n\alpha_n / \log n \to \infty$. If $\log(MK) \ge (1+\xi)\, n\alpha_n\D(Q_1\|Q_0)$ for some $\xi > 0$, then for some $c > 0$
+$$
+\E_{\mathcal C}\, \D\big(\widehat Q^n \,\big\|\, Q_{\alpha_n}^{\otimes n}\big) \le e^{-c\, n\alpha_n}.
+$$
+:::
+
+::: {.pf .fragment fragment-index=1}
+Apply Lemma 2(b) with $MK$ codewords, target $Q_{\alpha_n}^{\otimes n}$, and $\gamma = (1 + \xi/2)\, n\alpha_n\D(Q_1\|Q_0)$; the minimum mass of the target is $\mu_n^n$ with $\mu_n = \min_z Q_{\alpha_n}(z)$.
+$$
+\E_{\mathcal C}\, \D\big(\widehat Q^n \,\big\|\, Q_{\alpha_n}^{\otimes n}\big) \le
+\underbrace{\frac{e^{\gamma}}{MK}}_{\le\, e^{-\frac{\xi}{2} n\alpha_n \D(Q_1\|Q_0)}}
++ \underbrace{\Prob\big[\imath_\alpha(X^n;Z^n) > \gamma\big]}_{\text{Bernstein: } \le\, e^{-c\, n\alpha_n}} \cdot \underbrace{\big(1 + n\log\tfrac{1}{\mu_n}\big)}_{\text{polynomial in } n}
+$$
+Since $\gamma$ exceeds the mean of $\imath_\alpha$ by $\Theta(n\alpha_n)$ and the variance is $O(n\alpha_n)$, the Bernstein exponent is $\Theta(n\alpha_n)$; $n\alpha_n \gg \log n$ absorbs the polynomial factor.
+:::
+
+::: {.slide-ref}
+[12] M. R. Bloch, "Covert Communication over Noisy Channels: A Resolvability Perspective," *IEEE Trans. Inf. Theory*, 2016.
+:::
+
+## Covert Communication: [Covert Capacity and the Key]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{.on} [Secure ISAC]{} [Synthesis]{} [Watermarking]{} [$P_x$: Bob's output law · $Q_x$: Willie's output law]{.vars}
+:::
+
+::: {.theorem name="1 (Bloch [12])"}
+If $Q_1 \ll Q_0$, $Q_1 \neq Q_0$ and $P_1 \ll P_0$, the largest number of covert bits with vanishing error satisfies
+$$
+\lim_{n\to\infty} \frac{\log M}{\sqrt{n\delta}} = \sqrt{\frac{2}{\chi^2(Q_1\|Q_0)}}\; \D(P_1\|P_0),
+\qquad \text{with key} \quad \log K \approx \sqrt{\frac{2n\delta}{\chi^2(Q_1\|Q_0)}}\, \big[\D(Q_1\|Q_0) - \D(P_1\|P_0)\big]^+ .
+$$
+:::
+
+```{=html}
+<div class="ibar" style="grid-template-columns: 400px 300px 330px;">
+  <div class="lab-top fragment" data-fragment-index="1" style="grid-column:1/3;">Willie, Lemma 3: \(\;\log MK > (1+\xi)\, n\alpha_n \D(Q_1\Vert Q_0)\)</div>
+  <div class="br-top fragment" data-fragment-index="1" style="grid-column:1/3;"></div>
+  <div class="seg c-slate" style="grid-column:1;"><span>\(m\): message</span></div>
+  <div class="seg c-gold" style="grid-column:2;"><span>\(k\): key</span></div>
+  <div class="side" style="grid-column:3;">codewords \(x^n(m,k)\)<br>i.i.d. \(\Pi_{\alpha_n}^{\otimes n}\)</div>
+  <div class="br-bot fragment" data-fragment-index="2" style="grid-column:1;"></div>
+  <div class="lab-bot fragment" data-fragment-index="2" style="grid-column:1/3;">Bob knows \(k\), Lemma 1 rescaled: \(\;\log M < (1-\xi)\, n\alpha_n \D(P_1\Vert P_0)\)</div>
+  <div class="res fragment" data-fragment-index="3">with \(n\alpha_n = \sqrt{2n\delta/\chi^2(Q_1\Vert Q_0)}\) and the identity of the previous slides \(\;\Rightarrow\;\) Theorem 1</div>
+</div>
+```
+
+::: {.fragment fragment-index=4}
+
+- **Converse** in two lines, with average weight $\bar\alpha_n$: $\;\delta \ge \D(\widehat Q^n\|Q_0^{\otimes n}) \ge \sum_i \D(\widehat Q_i\|Q_0) \ge n\,\D(Q_{\bar\alpha_n}\|Q_0) \approx \frac{n\bar\alpha_n^2}{2}\chi^2(Q_1\|Q_0)$, and Fano gives $\;\log M \lesssim n\,\I(\Pi_{\bar\alpha_n}, W_{Y|X}) \le n\bar\alpha_n\D(P_1\|P_0)$
+- **No key** is needed when $\D(P_1\|P_0) > \D(Q_1\|Q_0)$: the message alone has enough randomness to cover Willie's channel
+
+:::
+
+::: {.slide-ref}
+[12] M. R. Bloch, "Covert Communication over Noisy Channels: A Resolvability Perspective," *IEEE Trans. Inf. Theory*, 2016.
+:::
+
+## {}
+
+```{=html}
+<div class="part-mark">
+  <div class="pn">Part III</div>
+  <div class="pt">Secure Integrated Sensing and Communication</div>
+  <div class="pr"></div>
+  <div class="pq">Hiding the structure of a state-dependent codebook from a sensing eavesdropper</div>
+</div>
+```
+
+## Secure ISAC: [An Eavesdropper That Also Senses]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{.on} [Synthesis]{} [Watermarking]{} [$S$: state · $X$: input · $Y_1$: Rx, fed back · $Y_2$: Eve]{.vars}
+:::
+
+:::: {.columns}
+::: {.column width="50%"}
+```{=html}
+<div class="dg" style="width:780px;height:380px;">
+<svg viewBox="0 0 780 380">
+  <defs><marker id="ahi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#44546a"/></marker>
+  <marker id="ahib" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3a6ea5"/></marker></defs>
+  <line x1="8" y1="200" x2="55" y2="200" stroke="#44546a" stroke-width="3" marker-end="url(#ahi)"/>
+  <rect x="60" y="155" width="150" height="90" rx="10" fill="#fff" stroke="#44546a" stroke-width="3"/>
+  <line x1="210" y1="200" x2="305" y2="200" stroke="#44546a" stroke-width="3" marker-end="url(#ahi)"/>
+  <rect x="310" y="155" width="180" height="90" rx="10" fill="#f4f6f9" stroke="#44546a" stroke-width="3"/>
+  <rect x="345" y="72" width="110" height="44" rx="8" fill="#f7f3e6" stroke="#b3a369" stroke-width="3"/>
+  <line x1="400" y1="116" x2="400" y2="151" stroke="#b3a369" stroke-width="3" marker-end="url(#ahi)"/>
+  <polyline points="490,180 540,180 540,105 610,105" fill="none" stroke="#44546a" stroke-width="3" marker-end="url(#ahi)"/>
+  <rect x="615" y="75" width="150" height="60" rx="10" fill="#fff" stroke="#44546a" stroke-width="3"/>
+  <polyline points="490,220 540,220 540,295 610,295" fill="none" stroke="#44546a" stroke-width="3" marker-end="url(#ahi)"/>
+  <rect x="615" y="265" width="150" height="60" rx="10" fill="#fff" stroke="#b03a2e" stroke-width="3"/>
+  <polyline points="578,105 578,32 135,32 135,151" fill="none" stroke="#3a6ea5" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#ahib)"/>
+  <line x1="135" y1="245" x2="135" y2="300" stroke="#44546a" stroke-width="3" marker-end="url(#ahi)"/>
+</svg>
+<div class="lb" style="left:24px;top:178px;">\(W\)</div>
+<div class="lb bx" style="left:135px;top:186px;">Tx</div>
+<div class="lb mu" style="left:135px;top:216px;">encode + sense</div>
+<div class="lb" style="left:258px;top:180px;">\(X_t\)</div>
+<div class="lb" style="left:400px;top:200px;">\(W_{Y_1Y_2|X,S}\)</div>
+<div class="lb" style="left:400px;top:94px;">state \(S\)</div>
+<div class="lb" style="left:560px;top:88px;">\(Y_1\)</div>
+<div class="lb bx" style="left:690px;top:105px;">Rx: \(\hat W\)</div>
+<div class="lb" style="left:560px;top:278px;">\(Y_2\)</div>
+<div class="lb bx" style="left:690px;top:295px;color:#b03a2e;">Eve: \((\hat W, \hat S)\)</div>
+<div class="lb bl" style="left:356px;top:14px;">feedback \(Z_t = Y_{1,t-1}\)</div>
+<div class="lb" style="left:135px;top:326px;">\(\hat S\) at stopping time \(\tau\)</div>
+</div>
+```
+:::
+
+::: {.column width="50%"}
+- **Tx** sends a message to Rx and **senses** the fixed state $S$ from feedback; it adapts its input type $P_{X,s}$ to the state estimate and stops at an LLR-based time $\tau$
+- **Eve** observes $Y_2^\tau$ and wants **both** the message and the state; she knows all kernels and Tx's public policy
+- **Metrics**: secrecy rate $R$; Tx exponent $E_1 = -\frac1n\log P_{d_1}$ (large); Eve exponent $E_2 = -\frac1n\log P_{d_2}$ (small); strong secrecy $\max_s \I(W; Y_2^\tau) \le \delta$
+:::
+::::
+
+::: {.fragment fragment-index=1}
+
+::: {.takeaway}
+**Tension**: adapting $P_{X,s}$ to the state helps Tx sense, and leaks the state to Eve through the statistics of the codebook.
+:::
+
+:::
+
+::: {.slide-ref}
+[15] S. Guo, M. R. Bloch, "Secure Integrated Sensing and Communication against Communication and Sensing Eavesdropping," arXiv:2601.23216, 2026.
+:::
+
+## Secure ISAC: [Where Soft Covering Enters: Eve Sees a Mixture]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{.on} [Synthesis]{} [Watermarking]{} [$S$: state · $X$: input · $Y_1$: Rx, fed back · $Y_2$: Eve]{.vars}
+:::
+
+- **Messages are key-protected**, so Eve's likelihood for state $s$ is a mixture over the codebook $\mathcal C_s$ drawn from $P_{X,s}$
+$$
+p_s(y_2^n) = \frac{1}{|\mathcal C_s|}\sum_{x^n \in \mathcal C_s} W^{\otimes n}_{Y_2|X,s}(y_2^n \mid x^n)
+$$
+
+::: {.cards .tight}
+::: {.card .c-on .fragment fragment-index=1}
+**Resolvable at Eve**: codebook rate $\ge R_2(s) \triangleq \I(P_{X,s}; W_{Y_2|X,s})$
+
+Soft covering: $p_s \approx \bar Q_s \triangleq (P_{X,s} \circ W_{Y_2|X,s})^{\otimes n}$. Eve tests two i.i.d. laws, with exponent
+$$
+\Ch\big(P_{X,s}\circ W_{Y_2|X,s} \,\big\|\, P_{X,s'}\circ W_{Y_2|X,s'}\big)
+$$
+:::
+
+::: {.card .c-off .fragment fragment-index=2}
+**Not resolvable**: the mixture keeps the codebook's structure
+
+Eve can infer the codeword type and hence the state; Tx falls back to an open-loop type $P_{X,s} = P_X$, and Eve's exponent is the conditional Chernoff information
+$$
+\Ch\big(W_{Y_2|X,s} \,\big\|\, W_{Y_2|X,s'} \,\big|\, P_X\big)
+$$
+:::
+:::
+
+::: {.fragment fragment-index=3}
+
+- **Confusion strategy**: choose $\{P_{X,s}\}$ with $P_{X,s}\circ W_{Y_2|X,s} = P_{X,s'}\circ W_{Y_2|X,s'}$; the Chernoff information is $0$, so Tx adapts to the state while Eve's sensing exponent vanishes (for BSCs, $P_{X,s}(0) = \frac12$ for all $s$ works)
+
+:::
+
+::: {.slide-ref}
+[15] S. Guo, M. R. Bloch, "Secure Integrated Sensing and Communication against Communication and Sensing Eavesdropping," arXiv:2601.23216, 2026.
+:::
+
+## Secure ISAC: [Soft Covering Must Beat Chernoff]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{.on} [Synthesis]{} [Watermarking]{} [$\Gamma_s$: Eve's code-induced law · $\bar Q_s$: its i.i.d. product approximation]{.vars}
+:::
+
+::: {.lemma name="4 (Eve's exponent under resolvability, cf. [15])"}
+If $\V(\Gamma_{s''}, \bar Q_{s''}) \le e^{-nE_{\SC}(P_{X,s''})}$ for $s'' \in \{s, s'\}$ and $\min_{s''} E_{\SC}(P_{X,s''}) > \Ch\big(P_{X,s}\circ W_{Y_2|X,s} \,\|\, P_{X,s'}\circ W_{Y_2|X,s'}\big)$, then the error of Eve's best test between $s$ and $s'$ decays with exponent exactly this Chernoff information.
+:::
+
+::: {.pf .fragment fragment-index=1}
+For any decision region $\mathcal A$, moving each law to its product approximation costs at most its TV:
+$$
+\Big|\big[\Gamma_s(\mathcal A^c) + \Gamma_{s'}(\mathcal A)\big] - \big[\bar Q_s(\mathcal A^c) + \bar Q_{s'}(\mathcal A)\big]\Big| \le \V(\Gamma_s, \bar Q_s) + \V(\Gamma_{s'}, \bar Q_{s'}) \le 2e^{-n\min E_{\SC}}.
+$$
+For i.i.d. hypotheses the minimum over $\mathcal A$ of the bracket is $e^{-n(\Ch + o(1))}$ (Chernoff [17]); the TV term is exponentially smaller.
+:::
+
+::: {.fragment fragment-index=2}
+
+- **Quantitative requirement**: TV must vanish *faster than the hypothesis-test error*, $E_{\SC} > \Ch$; "$\V \to 0$" alone is not enough
+- **Exact soft-covering exponent** [8] (constant-composition codebook, rate $R \ge \I(P_X, W)$), which defines the resolvability region $\mathcal P_{\mathrm{res}}$ in [15]:
+$$
+E_{\SC}(P_X, W) = \min_{Q_{Y|X}} \Big\{\D(P_X Q_{Y|X} \| P_X W) + \tfrac12\big[R - \D(P_X Q_{Y|X} \| P_X Q_Y)\big]^+\Big\}
+$$
+:::
+
+::: {.slide-ref}
+[8] S. Yagli, P. Cuff, "Exact Soft-Covering Exponent," *IEEE Trans. Inf. Theory*, 2019. &nbsp; [15] S. Guo, M. R. Bloch, "Secure Integrated Sensing and Communication against Communication and Sensing Eavesdropping," arXiv:2601.23216, 2026.<br>
+[17] H. Chernoff, "A Measure of Asymptotic Efficiency for Tests of a Hypothesis Based on the Sum of Observations," *Ann. Math. Stat.*, 1952.
+:::
+
+## Secure ISAC: [Feedback Keys Pay for Covering and for the One-Time Pad]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{.on} [Synthesis]{} [Watermarking]{} [$R_1 = \I(P_{X,s};W_{Y_1|X,s})$ · $R_2 = \I(P_{X,s};W_{Y_2|X,s})$ · $R_{\mathrm{key}} = \Hent(Y_1|X,Y_2)$]{.vars}
+:::
+
+- **Keys from feedback** at rate $R_{\mathrm{key}}(s) = \Hent(Y_1 \mid X, Y_2)$ [16]; in the regime $(R_2 - R_{\mathrm{key}})^+ < R_1 < R_2$, each block uses a codebook of rate $R_2$ drawn from $P_{X,\hat s}$:
+
+```{=html}
+<div class="ibar" style="grid-template-columns: 330px 330px 300px 300px;">
+  <div class="lab-top fragment" data-fragment-index="1" style="grid-column:1/4;">whole codebook, rate \(R_2(s)\): resolvable at Eve, so the mixture looks i.i.d. and hides \(P_{X,s}\)</div>
+  <div class="br-top fragment" data-fragment-index="1" style="grid-column:1/4;"></div>
+  <div class="seg c-slate" style="grid-column:1;"><span>\(m \oplus r_2\) &nbsp;<span style="font-size:17px;color:#5a5a5a;">\(R_1 + R_{\mathrm{key}} - R_2\)</span></span></div>
+  <div class="seg c-blue" style="grid-column:2;"><span>\(n\) &nbsp;<span style="font-size:17px;color:#5a5a5a;">\(R_2 - R_{\mathrm{key}}\)</span></span></div>
+  <div class="seg c-gold" style="grid-column:3;"><span>\(r_1\) &nbsp;<span style="font-size:17px;color:#5a5a5a;">\(R_2 - R_1\)</span></span></div>
+  <div class="side" style="grid-column:4;">key \(= (r_1, r_2)\):<br>\(r_1\) covers, \(r_2\) pads</div>
+  <div class="br-bot fragment" data-fragment-index="2" style="grid-column:1/3;"></div>
+  <div class="lab-bot fragment" data-fragment-index="2" style="grid-column:1/3;">Rx knows \(r_1\) and decodes the rest at rate \(R_1(s)\)</div>
+  <div class="res fragment" data-fragment-index="3">secret message rate \([R_1 - R_2 + R_{\mathrm{key}}]^+\), with the state hidden whenever \(E_{\SC} > \Ch\)</div>
+</div>
+```
+
+::: {.fragment fragment-index=4}
+
+```{=html}
+<table class="kv2">
+  <thead><tr><th>Regime</th><th>Scheme</th><th>Eve's state exponent</th></tr></thead>
+  <tbody>
+    <tr><td>\(R_1 \gt R_2\)</td><td>wiretap code with feedback keys</td><td>mixture Chernoff \(\Ch(P_{X,s}\circ W_s \Vert P_{X,s'}\circ W_{s'})\)</td></tr>
+    <tr><td>\((R_2 - R_{\mathrm{key}})^+ \lt R_1 \lt R_2\)</td><td>key split: resolvability (\(r_1\)) + one-time pad (\(r_2\))</td><td>mixture Chernoff, if \(E_{\SC} \gt \Ch\)</td></tr>
+    <tr><td>\(R_1 \lt (R_2 - R_{\mathrm{key}})^+\)</td><td>all keys to the one-time pad, open-loop type \(P_X\)</td><td>conditional Chernoff \(\Ch(W_s \Vert W_{s'} \vert P_X)\)</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: {.slide-ref}
+[16] R. Ahlswede, N. Cai, "Transmission, Identification and Common Randomness Capacities for Wire-Tape Channels with Secure Feedback from the Decoder," *General Theory of Information Transfer and Combinatorics*, Springer, 2006.
+:::
+
+## Secure ISAC: [Achievable Region]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{.on} [Synthesis]{} [Watermarking]{} [$R_1 = \I(P_{X,s};W_{Y_1|X,s})$ · $R_2 = \I(P_{X,s};W_{Y_2|X,s})$ · $R_{\mathrm{key}} = \Hent(Y_1|X,Y_2)$]{.vars}
+:::
+
+::: {.theorem name="2 (Guo–Bloch [15])"}
+The union over $\rho \in [0,1]$ and state-dependent types $\{P_{X,s}\}_{s\in\mathcal S}$ of all $(R, E_1, E_2)$ such that, for every $s$,
+$$
+R \le \min\Big(\rho R_{\mathrm{key}}(s) + (1-\rho)\big[R_1(s) - R_2(s) + R_{\mathrm{key}}(s)\big]^+,\; R_1(s)\Big),
+\qquad E_1 \le \min_{s' \neq s} \D\big(W_{Y_1|X,s} \,\|\, W_{Y_1|X,s'} \,\big|\, P_{X,s}\big),
+$$
+$$
+E_2 \ge \min_{s'\neq s}
+\begin{cases}
+\rho\,\Ch\big(W_{Y_2|X,s} \| W_{Y_2|X,s'} \,|\, P_{X,s}\big) + (1-\rho)\,\Ch\big(P_{X,s}\circ W_{Y_2|X,s} \,\|\, P_{X,s'}\circ W_{Y_2|X,s'}\big) & \text{if } (P_{X,s}, P_{X,s'}) \in \mathcal P_{\mathrm{res}} \\[2pt]
+\Ch\big(W_{Y_2|X,s} \| W_{Y_2|X,s'} \,|\, P_{X,s}\big) & \text{otherwise}
+\end{cases}
+$$
+is achievable, where $\mathcal P_{\mathrm{res}}$ requires $R_1 - R_2 + R_{\mathrm{key}} \ge 0$ and $\Ch\big(P_{X,s}\circ W_{Y_2|X,s} \| P_{X,s'}\circ W_{Y_2|X,s'}\big) < \min_{s''\in\{s,s'\}} E_{\SC}(P_{X,s''}, W_{Y_2|X,s''})$.
+:::
+
+::: {.fragment fragment-index=1}
+
+```{=html}
+<table class="kv2">
+  <tbody>
+    <tr><td>\((1-\rho)\,\Ch(P_{X,s}\circ W \Vert P_{X,s'}\circ W')\)</td><td>fraction of time soft covering hides the codebook: Eve tests products (Lemma 4)</td></tr>
+    <tr><td>\(\rho\,\Ch(W \Vert W' \vert P_{X,s})\)</td><td>fraction of time spent on pure one-time pad: higher rate \(R_{\mathrm{key}}\), but codewords are not covered</td></tr>
+    <tr><td>\(\mathcal P_{\mathrm{res}}\)</td><td>enough randomness to cover (\(R_1 + R_{\mathrm{key}} \ge R_2\)), and covering faster than sensing (\(E_{\SC} \gt \Ch\))</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: {.fragment fragment-index=2}
+
+- **Takeaway**: with the confusion strategy and resolvability, Tx reaches its sensing-secure operating point even when Eve's channel is stronger than Rx's
+
+:::
+
+::: {.slide-ref}
+[15] S. Guo, M. R. Bloch, "Secure Integrated Sensing and Communication against Communication and Sensing Eavesdropping," arXiv:2601.23216, 2026.
+:::
+
+## {}
+
+```{=html}
+<div class="part-mark">
+  <div class="pn">Part IV</div>
+  <div class="pt">Channel Synthesis</div>
+  <div class="pr"></div>
+  <div class="pq">How much communication does it take to simulate a channel?</div>
+</div>
+```
+
+## Channel Synthesis: [Simulating a Channel with Limited Communication]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{} [Synthesis]{.on} [Watermarking]{} [$X$: source · $Y$: synthesized output · $U$: auxiliary]{.vars}
+:::
+
+:::: {.columns style="align-items:flex-start;"}
+::: {.column width="54%"}
+```{=html}
+<div class="dg" style="width:720px;height:290px;">
+<svg viewBox="0 0 720 290">
+  <defs><marker id="ahs1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#44546a"/></marker>
+  <marker id="ahs2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#b3a369"/></marker></defs>
+  <line x1="20" y1="170" x2="125" y2="170" stroke="#44546a" stroke-width="3" marker-end="url(#ahs1)"/>
+  <rect x="130" y="135" width="130" height="70" rx="10" fill="#fff" stroke="#44546a" stroke-width="3"/>
+  <line x1="260" y1="170" x2="445" y2="170" stroke="#44546a" stroke-width="3" marker-end="url(#ahs1)"/>
+  <rect x="450" y="135" width="130" height="70" rx="10" fill="#fff" stroke="#44546a" stroke-width="3"/>
+  <line x1="580" y1="170" x2="655" y2="170" stroke="#44546a" stroke-width="3" marker-end="url(#ahs1)"/>
+  <polyline points="355,62 195,62 195,130" fill="none" stroke="#b3a369" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#ahs2)"/>
+  <polyline points="355,62 515,62 515,130" fill="none" stroke="#b3a369" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#ahs2)"/>
+</svg>
+<div class="lb" style="left:70px;top:140px;">\(X^n \sim Q_X^{\otimes n}\)</div>
+<div class="lb bx" style="left:195px;top:170px;">Encoder</div>
+<div class="lb" style="left:352px;top:146px;">\(M \in [1:2^{nR}]\)</div>
+<div class="lb bx" style="left:515px;top:170px;">Decoder</div>
+<div class="lb" style="left:688px;top:170px;">\(Y^n\)</div>
+<div class="lb gd" style="left:355px;top:36px;">common randomness \(K \in [1:2^{nR_0}]\)</div>
+<div class="lb" style="left:360px;top:258px;">goal: \(\V\big(P_{X^nY^n},\, Q_{XY}^{\otimes n}\big) \to 0\)</div>
+</div>
+```
+
+::: {.theorem name="3 (Cuff [5])"}
+$(R, R_0)$ synthesizes $Q_{Y|X}$ if and only if, for some $U$ with $X - U - Y$,
+$$
+R \ge \I(X;U), \qquad R + R_0 \ge \I(X,Y;U).
+$$
+:::
+:::
+
+::: {.column width="46%"}
+![](img/softcover/synth_region.png){.fig width="560"}
+
+::: {.figcap2}
+$Q_X = \mathrm{Bernoulli}(\frac12)$ and $Q_{Y|X}$ a BSC(0.1). Boundary traced by $U \sim \mathrm{Bernoulli}(\frac12)$, $X = U \oplus A$, $Y = U \oplus B$; both endpoints are exact.
+:::
+:::
+::::
+
+::: {.fragment fragment-index=1}
+
+- **Two extremes**: unlimited common randomness gives $R = \I(X;Y)$, the reverse Shannon theorem [18, 19]; none gives Wyner's common information $C(X;Y)$ [2], whose proof is the original soft-covering lemma
+
+:::
+
+::: {.slide-ref}
+[2] A. D. Wyner, "The Common Information of Two Dependent Random Variables," *IEEE Trans. Inf. Theory*, 1975. &nbsp; [5] P. Cuff, "Distributed Channel Synthesis," *IEEE Trans. Inf. Theory*, 2013. &nbsp; [18] C. H. Bennett, P. W. Shor, J. A. Smolin, A. V. Thapliyal, "Entanglement-Assisted Capacity of a Quantum Channel and the Reverse Shannon Theorem," *IEEE Trans. Inf. Theory*, 2002. &nbsp; [19] A. Winter, "Compression of Sources of Probability Distributions and Density Operators," arXiv:quant-ph/0208131, 2002.
+:::
+
+## Channel Synthesis: [Achievability by Two Soft Coverings]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{} [Synthesis]{.on} [Watermarking]{} [$X$: source · $Y$: synthesized output · $U$: auxiliary]{.vars}
+:::
+
+:::: {.columns style="align-items:flex-start;"}
+::: {.column width="44%"}
+```{=html}
+<div class="dg" style="width:640px;height:235px;">
+<svg viewBox="0 0 640 235">
+  <defs><marker id="ahg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#44546a"/></marker></defs>
+  <rect x="10" y="80" width="130" height="70" rx="10" fill="#f7f3e6" stroke="#b3a369" stroke-width="3"/>
+  <line x1="140" y1="115" x2="195" y2="115" stroke="#44546a" stroke-width="3" marker-end="url(#ahg)"/>
+  <rect x="200" y="80" width="200" height="70" rx="10" fill="#fff" stroke="#44546a" stroke-width="3"/>
+  <polyline points="400,103 430,103 430,45 475,45" fill="none" stroke="#44546a" stroke-width="3" marker-end="url(#ahg)"/>
+  <rect x="480" y="15" width="150" height="60" rx="10" fill="#f4f6f9" stroke="#44546a" stroke-width="3"/>
+  <polyline points="400,127 430,127 430,185 475,185" fill="none" stroke="#44546a" stroke-width="3" marker-end="url(#ahg)"/>
+  <rect x="480" y="155" width="150" height="60" rx="10" fill="#f4f6f9" stroke="#44546a" stroke-width="3"/>
+</svg>
+<div class="lb" style="left:75px;top:104px;">\((M,K)\)</div>
+<div class="lb mu" style="left:75px;top:131px;">uniform</div>
+<div class="lb" style="left:300px;top:104px;">\(U^n = u^n(M,K)\)</div>
+<div class="lb mu" style="left:300px;top:131px;">codebook i.i.d. \(Q_U\)</div>
+<div class="lb" style="left:555px;top:45px;">\(Q_{X|U}^{\otimes n} \to X^n\)</div>
+<div class="lb" style="left:555px;top:185px;">\(Q_{Y|U}^{\otimes n} \to Y^n\)</div>
+</div>
+<div class="figcap2">ideal distribution \(\Gamma\): \(X^n\) and \(Y^n\) are independent given \((M,K)\)</div>
+<div class="ibar" style="grid-template-columns: 300px 260px;">
+  <div class="lab-top fragment" data-fragment-index="1" style="grid-column:1/3;">\(R + R_0 \gt \I(X,Y;U)\)</div>
+  <div class="br-top fragment" data-fragment-index="1" style="grid-column:1/3;"></div>
+  <div class="seg c-slate" style="grid-column:1;"><span>\(m\), rate \(R\)</span></div>
+  <div class="seg c-gold" style="grid-column:2;"><span>\(k\), rate \(R_0\)</span></div>
+  <div class="br-bot fragment" data-fragment-index="2" style="grid-column:1;"></div>
+  <div class="lab-bot fragment" data-fragment-index="2" style="grid-column:1/3;">row \(k\) fixed: \(R \gt \I(X;U)\)</div>
+</div>
+```
+:::
+
+::: {.column width="56%"}
+::: {.fragment fragment-index=1}
+1. **Cover $(X,Y)$** with all $2^{n(R+R_0)}$ codewords: $\;\Gamma_{X^nY^n} \approx Q_{XY}^{\otimes n}$
+:::
+
+::: {.fragment fragment-index=2}
+2. **Cover $X$** with row $k$ alone, for every $k$: $\;\Gamma_{X^nK} \approx Q_X^{\otimes n} \times \Unif(K)$
+:::
+
+::: {.fragment fragment-index=3}
+3. **Real code**: the encoder is the **likelihood encoder** $\Gamma_{M|X^nK}$ [21]; the decoder draws $Y^n \sim Q^{\otimes n}_{Y|U}(\cdot \mid u^n(M,K))$
+$$
+P = Q_X^{\otimes n}\,\Unif_K\, \Gamma_{M|X^nK}\, \Gamma_{Y^n|MK},
+\quad
+\Gamma = \Gamma_{X^nK}\, \Gamma_{M|X^nK}\, \Gamma_{Y^n|MK}
+$$
+so $P$ and $\Gamma$ differ only in their first factor: $\;\V(P, \Gamma) = \V\big(Q_X^{\otimes n}\Unif_K,\, \Gamma_{X^nK}\big)$
+:::
+
+::: {.fragment fragment-index=4}
+4. **Triangle inequality**: $\;\V\big(P_{X^nY^n}, Q_{XY}^{\otimes n}\big) \le \V(P, \Gamma) + \V\big(\Gamma_{X^nY^n}, Q_{XY}^{\otimes n}\big) \to 0$
+:::
+:::
+::::
+
+::: {.fragment fragment-index=5}
+
+::: {.takeaway}
+**Ideal-distribution method**: write down $\Gamma$, check two soft-covering conditions, and read the encoder off $\Gamma$. Part V reuses this verbatim.
+:::
+
+:::
+
+::: {.slide-ref}
+[21] E. C. Song, P. Cuff, H. V. Poor, "The Likelihood Encoder for Lossy Compression," *IEEE Trans. Inf. Theory*, 2016.
+:::
+
+## Channel Synthesis: [Converse Sketch]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{} [Synthesis]{.on} [Watermarking]{} [$X$: source · $Y$: synthesized output · $U$: auxiliary]{.vars}
+:::
+
+- **Auxiliary** $U_t \triangleq (M, K, X^{t-1})$. Since the decoder sees only $(M,K)$, $\;Y^n \perp X^n \mid (M,K)$, so $X_t - U_t - Y_t$ holds
+
+::: {.fragment fragment-index=1}
+
+- **Communication rate**: $X^n$ is i.i.d. and independent of $K$, so
+$$
+nR \ge H(M) \ge \I(X^n; M \mid K) = \I(X^n; M, K) = \sum_{t=1}^n \I(X_t; M, K, X^{t-1}) = \sum_{t=1}^n \I(X_t; U_t)
+$$
+
+:::
+
+::: {.fragment fragment-index=2}
+
+- **Sum rate**: by the chain rule,
+$$
+n(R + R_0) \ge \I(X^nY^n; M, K) \ge \sum_{t=1}^n \I(X_tY_t; U_t) - \underbrace{\Big[\sum_{t=1}^n H(X_tY_t) - H(X^nY^n)\Big]}_{\le\, n\,g(\epsilon)}
+$$
+    - the bracket vanishes for an i.i.d. law; $\V(P_{X^nY^n}, Q_{XY}^{\otimes n}) \le \epsilon$ and continuity of entropy bound it by $n\,g(\epsilon)$ with $g(\epsilon) \to 0$
+
+:::
+
+::: {.fragment fragment-index=3}
+
+- **Single-letterize** with a time-sharing variable $T$ and $U = (U_T, T)$; $(X_T, Y_T)$ is $\epsilon$-close to $Q_{XY}$, and continuity closes the gap as $\epsilon \to 0$
+- **Strong coordination** [20]: the same region holds for synthesizing a joint law $Q_{XY}$ given the source, the coordination view used in Part V
+
+:::
+
+::: {.slide-ref}
+[20] P. Cuff, H. H. Permuter, T. M. Cover, "Coordination Capacity," *IEEE Trans. Inf. Theory*, 2010.
+:::
+
+## {}
+
+```{=html}
+<div class="part-mark">
+  <div class="pn">Part V</div>
+  <div class="pt">Covert Multi-bit LLM Watermarking</div>
+  <div class="pr"></div>
+  <div class="pq">Distribution-preserving watermarking as channel synthesis with state</div>
+</div>
+```
+
+## LLM Watermarking: [Covert Watermarking Is Channel Synthesis with State]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{.on} [$S$: token distribution (state) · $X$: token · $U$: codeword symbol]{.vars}
+:::
+
+:::: {.columns style="align-items:flex-start;"}
+::: {.column width="40%"}
+```{=html}
+<div class="overlay-fig" style="width:560px; aspect-ratio: 975 / 414;">
+  <img src="img/itw2026/Fig_original.png">
+  <svg viewBox="0 0 975 414" preserveAspectRatio="none">
+    <text x="312" y="276" text-anchor="end" font-family="'Latin Modern Math','CMU Serif','Times New Roman',serif" font-style="italic" font-size="40" fill="#000">U<tspan font-size="27" dx="3" dy="-19">n</tspan></text>
+  </svg>
+</div>
+```
+
+- **Encoder** sees the block of LLM states $S^n$, message $M$, key $K$: $\;U^n = f(S^n, M, K)$
+- **Sampler** $W_{X|U,S}$ draws the tokens; **decoder** $\hat M = g(X^n, K)$
+- **Covert for every message**: $\max_m \V\big(\widetilde P^{\,m}_{X^nS^n}, P_{XS}^{\otimes n}\big) \to 0$, with $P_{XS}$ the LLM's own law
+:::
+
+::: {.column width="60%"}
+::: {.fragment fragment-index=1}
+```{=html}
+<table class="kv2">
+  <thead><tr><th>Channel synthesis (Part IV)</th><th>Covert watermarking [22]</th></tr></thead>
+  <tbody>
+    <tr><td>source \(X^n \sim Q_X^{\otimes n}\)</td><td>LLM states \(S^n \sim P_S^{\otimes n}\), seen non-causally by the encoder</td></tr>
+    <tr><td>synthesized output \(Y^n\)</td><td>tokens \(X^n\)</td></tr>
+    <tr><td>target \(Q_{XY}^{\otimes n}\)</td><td>the LLM's own law \(P_{XS}^{\otimes n}\): distribution preservation</td></tr>
+    <tr><td>common randomness \(K\)</td><td>secret key \(K\), shared with the detector</td></tr>
+    <tr><td>description index, rate \(R\)</td><td>likelihood-encoder index \(J\), rate \(R_0\)</td></tr>
+    <tr><td>no message</td><td>message \(M\), decoded from the tokens (Gelfand–Pinsker [23])</td></tr>
+    <tr><td>target on average</td><td>target for <b>every</b> \(m\): semantic covertness [6]</td></tr>
+  </tbody>
+</table>
+```
+:::
+:::
+::::
+
+::: {.slide-ref}
+[6] P. Cuff, "A Stronger Soft-Covering Lemma and Applications," IEEE CNS Workshops, 2015. &nbsp; [22] S. Guo, T. Kann, T. Baluta, M. R. Bloch, "Covert Multi-bit LLM Watermarking: An Information Theory and Coding Approach," IEEE ITW, 2026.<br>
+[23] S. I. Gel'fand, M. S. Pinsker, "Coding for Channel with Random Parameters," *Probl. Control Inf. Theory*, 1980.
+:::
+
+## LLM Watermarking: [Covert Watermarking Capacity]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{.on} [$S$: token distribution (state) · $X$: token · $U$: codeword symbol]{.vars}
+:::
+
+::: {.theorem name="4 (Guo–Kann–Baluta–Bloch [22])"}
+With i.i.d. states $S^n \sim P_S^{\otimes n}$, the covert watermarking capacity with non-causal state is
+$$
+C = \max_{P_{U|S},\, W_{X|U,S}} \I(U;X) - \I(U;S) \quad \text{s.t.} \quad \sum_u P_{UXS}(u,x,s) = P_{XS}(x,s),
+\qquad \text{achieved with key rate } R_K = \I(U;X \mid S).
+$$
+:::
+
+```{=html}
+<div class="cbar">
+  <div class="lab-top fragment" data-fragment-index="2">covertness for every \(m\), covered by \((k, j)\): \(\;R_K + R_0 > \mathbb{I}(U;X,S)\)</div>
+  <div class="br-top fragment" data-fragment-index="2"></div>
+  <div class="seg sk"><span>\(k\): key, \(R_K\)</span></div>
+  <div class="seg sj"><span>\(j\): likelihood encoder, \(R_0\)</span></div>
+  <div class="seg sm"><span>\(m\): message, \(R\)</span></div>
+  <div class="side fragment" data-fragment-index="1">soft covering of \(s^n\):<br>\(R_0 > \mathbb{I}(U;S)\)</div>
+  <div class="br-bot fragment" data-fragment-index="3"></div>
+  <div class="lab-bot fragment" data-fragment-index="3">decoder resolves \((m, j)\): \(\;R + R_0 < \mathbb{I}(U;X)\)</div>
+  <div class="res fragment" data-fragment-index="4">\(\Rightarrow\;\; R < \mathbb{I}(U;X) - \mathbb{I}(U;S), \qquad R_K > \mathbb{I}(U;X,S) - \mathbb{I}(U;S) = \mathbb{I}(U;X \mid S)\)</div>
+</div>
+```
+
+::: {.fragment fragment-index=5}
+
+```{=html}
+<table class="kv2">
+  <tbody>
+    <tr><td>\(\I(U;X) - \I(U;S)\)</td><td>Gelfand–Pinsker rate: the codeword adapts to token distributions the decoder never sees</td></tr>
+    <tr><td>\(\sum_u P_{UXS} = P_{XS}\)</td><td>covertness: averaged over \(U\), the synthesized sampler is the LLM's own sampler</td></tr>
+    <tr><td>\(R_K = \I(U;X \mid S) = R + \I(U;S \mid X)\)</td><td>every message bit costs at least one key bit</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: {.slide-ref}
+[22] S. Guo, T. Kann, T. Baluta, M. R. Bloch, "Covert Multi-bit LLM Watermarking: An Information Theory and Coding Approach," IEEE ITW, 2026.
+:::
+
+## LLM Watermarking: [Where Each Soft Covering Is Used]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{.on} [$S$: token distribution (state) · $X$: token · $U$: codeword symbol]{.vars}
+:::
+
+1. **Codebook**: $2^{n(R_K + R + R_0)}$ codewords $u^n(k, m, j)$ drawn i.i.d. from $P_U$
+
+::: {.fragment fragment-index=1}
+
+2. **Likelihood encoder** [21]: draw $j \propto P^{\otimes n}_{S|U}\big(s^n \mid u^n(k,m,j)\big)$, then $x^n \sim W^{\otimes n}_{X|U,S}$; soft covering of $s^n$ by the $j$-index, with $R_0 > \I(U;S)$, makes the ideal and real distributions match, exactly as in step 3 of Part IV
+
+:::
+
+::: {.fragment fragment-index=2}
+
+3. **Covertness for every $m$**: soft covering of $(x^n, s^n)$ by the $(k,j)$-indices ($R_K + R_0 > \I(U;X,S)$), with the high-probability lemma [6] and a union bound over the $2^{nR}$ messages
+
+:::
+
+::: {.fragment fragment-index=3}
+
+4. **Reliability**: with the key, the decoder resolves $(m, j)$ by typicality ($R + R_0 < \I(U;X)$), a packing step
+
+:::
+
+::: {.fragment fragment-index=4}
+
+- **Converse**: Gelfand–Pinsker chaining with $U_i = (M, K, S_{i+1}^n, X^{i-1})$, plus TV continuity to turn covertness into $\I(M; X^n, S^n) = o(n)$; the same auxiliary bounds both rates, giving $R_K \ge \I(U;X|S) \ge R$
+- **Beyond i.i.d. states**: LLM states have memory; information-spectrum versions of the same soft-covering conditions apply [22]
+
+:::
+
+::: {.slide-ref}
+[6] P. Cuff, "A Stronger Soft-Covering Lemma and Applications," IEEE CNS Workshops, 2015. &nbsp; [21] E. C. Song, P. Cuff, H. V. Poor, "The Likelihood Encoder for Lossy Compression," *IEEE Trans. Inf. Theory*, 2016.<br>
+[22] S. Guo, T. Kann, T. Baluta, M. R. Bloch, "Covert Multi-bit LLM Watermarking: An Information Theory and Coding Approach," IEEE ITW, 2026.
+:::
+
+## LLM Watermarking: [Example: Binary Support]{.sub}
+
+::: {.mapstrip}
+[Soft covering]{} [Covert]{} [Secure ISAC]{} [Synthesis]{} [Watermarking]{.on} [$S$: token distribution (state) · $X$: token · $U$: codeword symbol]{.vars}
+:::
+
+::: {.corollary .cor-compact name="2 (binary support [22])"}
+Let $|\mathcal X| = V$ and let the state $S$ be uniform over the $\binom{V}{2}$ token pairs, with $P_{X|S}(x \mid \{i,j\}) = \tfrac12$ for $x \in \{i,j\}$. Over binary auxiliaries $|\mathcal U| = 2$, the covert capacity is $\;R = \lfloor V^2/4 \rfloor \big/ \tbinom{V}{2} \to \tfrac12$ bit/token, with key rate $R_K = R$, achieved by a half/half labelling.
+:::
+
+:::: {.columns style="align-items:center;"}
+::: {.column width="45%"}
+```{=html}
+<svg class="maxcut" viewBox="0 0 600 510">
+  <g><line x1="300" y1="55" x2="473" y2="155" stroke="#cfd5dd" stroke-width="3"/><line x1="300" y1="55" x2="473" y2="355" stroke="#cfd5dd" stroke-width="3"/><line x1="300" y1="55" x2="300" y2="455" stroke="#cfd5dd" stroke-width="3"/><line x1="300" y1="55" x2="127" y2="355" stroke="#cfd5dd" stroke-width="3"/><line x1="300" y1="55" x2="127" y2="155" stroke="#cfd5dd" stroke-width="3"/><line x1="473" y1="155" x2="473" y2="355" stroke="#cfd5dd" stroke-width="3"/><line x1="473" y1="155" x2="300" y2="455" stroke="#cfd5dd" stroke-width="3"/><line x1="473" y1="155" x2="127" y2="355" stroke="#cfd5dd" stroke-width="3"/><line x1="473" y1="155" x2="127" y2="155" stroke="#cfd5dd" stroke-width="3"/><line x1="473" y1="355" x2="300" y2="455" stroke="#cfd5dd" stroke-width="3"/><line x1="473" y1="355" x2="127" y2="355" stroke="#cfd5dd" stroke-width="3"/><line x1="473" y1="355" x2="127" y2="155" stroke="#cfd5dd" stroke-width="3"/><line x1="300" y1="455" x2="127" y2="355" stroke="#cfd5dd" stroke-width="3"/><line x1="300" y1="455" x2="127" y2="155" stroke="#cfd5dd" stroke-width="3"/><line x1="127" y1="355" x2="127" y2="155" stroke="#cfd5dd" stroke-width="3"/><circle cx="300" cy="55" r="40" fill="#eef0f3" stroke="#9aa3ae" stroke-width="2"/><text x="300" y="63" text-anchor="middle" class="nl" fill="#44546a">cat</text><circle cx="473" cy="155" r="40" fill="#eef0f3" stroke="#9aa3ae" stroke-width="2"/><text x="473" y="163" text-anchor="middle" class="nl" fill="#44546a">dog</text><circle cx="473" cy="355" r="40" fill="#eef0f3" stroke="#9aa3ae" stroke-width="2"/><text x="473" y="363" text-anchor="middle" class="nl" fill="#44546a">fox</text><circle cx="300" cy="455" r="40" fill="#eef0f3" stroke="#9aa3ae" stroke-width="2"/><text x="300" y="463" text-anchor="middle" class="nl" fill="#44546a">owl</text><circle cx="127" cy="355" r="40" fill="#eef0f3" stroke="#9aa3ae" stroke-width="2"/><text x="127" y="363" text-anchor="middle" class="nl" fill="#44546a">hen</text><circle cx="127" cy="155" r="40" fill="#eef0f3" stroke="#9aa3ae" stroke-width="2"/><text x="127" y="163" text-anchor="middle" class="nl" fill="#44546a">bee</text></g>
+  <g class="fragment" data-fragment-index="1"><line x1="300" y1="55" x2="473" y2="355" stroke="#fff" stroke-width="6"/><line x1="300" y1="55" x2="473" y2="355" stroke="#aab2bd" stroke-width="3" stroke-dasharray="9 7"/><line x1="300" y1="55" x2="127" y2="355" stroke="#fff" stroke-width="6"/><line x1="300" y1="55" x2="127" y2="355" stroke="#aab2bd" stroke-width="3" stroke-dasharray="9 7"/><line x1="473" y1="155" x2="300" y2="455" stroke="#fff" stroke-width="6"/><line x1="473" y1="155" x2="300" y2="455" stroke="#aab2bd" stroke-width="3" stroke-dasharray="9 7"/><line x1="473" y1="155" x2="127" y2="155" stroke="#fff" stroke-width="6"/><line x1="473" y1="155" x2="127" y2="155" stroke="#aab2bd" stroke-width="3" stroke-dasharray="9 7"/><line x1="473" y1="355" x2="127" y2="355" stroke="#fff" stroke-width="6"/><line x1="473" y1="355" x2="127" y2="355" stroke="#aab2bd" stroke-width="3" stroke-dasharray="9 7"/><line x1="300" y1="455" x2="127" y2="155" stroke="#fff" stroke-width="6"/><line x1="300" y1="455" x2="127" y2="155" stroke="#aab2bd" stroke-width="3" stroke-dasharray="9 7"/><line x1="300" y1="55" x2="473" y2="155" stroke="#b3a369" stroke-width="6"/><line x1="300" y1="55" x2="300" y2="455" stroke="#b3a369" stroke-width="6"/><line x1="300" y1="55" x2="127" y2="155" stroke="#b3a369" stroke-width="6"/><line x1="473" y1="155" x2="473" y2="355" stroke="#b3a369" stroke-width="6"/><line x1="473" y1="155" x2="127" y2="355" stroke="#b3a369" stroke-width="6"/><line x1="473" y1="355" x2="300" y2="455" stroke="#b3a369" stroke-width="6"/><line x1="473" y1="355" x2="127" y2="155" stroke="#b3a369" stroke-width="6"/><line x1="300" y1="455" x2="127" y2="355" stroke="#b3a369" stroke-width="6"/><line x1="127" y1="355" x2="127" y2="155" stroke="#b3a369" stroke-width="6"/><circle cx="300" cy="55" r="40" fill="#2977d5"/><text x="300" y="63" text-anchor="middle" class="nl" fill="#fff">cat</text><circle cx="473" cy="155" r="40" fill="#ea6733"/><text x="473" y="163" text-anchor="middle" class="nl" fill="#fff">dog</text><circle cx="473" cy="355" r="40" fill="#2977d5"/><text x="473" y="363" text-anchor="middle" class="nl" fill="#fff">fox</text><circle cx="300" cy="455" r="40" fill="#ea6733"/><text x="300" y="463" text-anchor="middle" class="nl" fill="#fff">owl</text><circle cx="127" cy="355" r="40" fill="#2977d5"/><text x="127" y="363" text-anchor="middle" class="nl" fill="#fff">hen</text><circle cx="127" cy="155" r="40" fill="#ea6733"/><text x="127" y="163" text-anchor="middle" class="nl" fill="#fff">bee</text></g>
+</svg>
+<table class="splits fragment" data-fragment-index="1">
+  <tr><th>split</th><th>free pairs</th><th>rate</th></tr>
+  <tr><td>1 | 5</td><td>5 / 15</td><td>0.33</td></tr>
+  <tr><td>2 | 4</td><td>8 / 15</td><td>0.53</td></tr>
+  <tr class="best"><td>3 | 3</td><td>9 / 15</td><td>0.60</td></tr>
+</table>
+```
+:::
+
+::: {.column width="55%"}
+- Tokens are nodes, pair-states are edges; a one-bit label $u$ colours the nodes
+- A **mixed-colour** edge is a free cell: $U$ can carry a bit while the token stays uniform on the pair
+- A **same-colour** edge is stuck: covertness forces $U$ to carry nothing there
+- The rate is the fraction of cut edges, maximized by a balanced split; for $V = 6$, $R = 9/15 = 0.6$
+- ArcMark [24] reports a causal rate of $0.28$ on this example; non-causal state access raises the limit to $\frac12$
+:::
+::::
+
+::: {.slide-ref}
+[24] A. Gilani, S. Vithana, C. X. Long, O. Kosut, L. Sankar, F. P. Calmon, "ArcMark: Distortion-Free Multi-Byte LLM Watermark via Optimal Transport," NeurIPS, 2026.<br>
+[25] M. R. Bloch, *Information-Theoretic Security: A Unified Treatment of Information-Theoretic Primitives and Algorithms*, draft v0.23, Georgia Institute of Technology, 2020.
+:::
+
+## Summary: [One Lemma, Five Index Splits]{.sub}
+
+```{=html}
+<table class="kv2 sumtab">
+  <thead><tr><th>Setting</th><th>Covered (soft covering)</th><th>Decoded (packing)</th><th>What covering buys</th></tr></thead>
+  <tbody>
+    <tr><td>Wiretap [11]</td><td>row \(r\): \(R' \gt \I(X;Z)\)</td><td>\((m,r)\): \(R + R' \lt \I(X;Y)\)</td><td>strong secrecy</td></tr>
+    <tr class="fragment" data-fragment-index="1"><td>Covert [12]</td><td>\((m,k)\): \(\log MK \gt n\alpha_n\D(Q_1\Vert Q_0)\)</td><td>\(m\): \(\log M \lt n\alpha_n\D(P_1\Vert P_0)\)</td><td>undetectability; \(\Theta(\sqrt n)\) bits with weight \(\alpha_n \propto 1/\sqrt n\)</td></tr>
+    <tr class="fragment" data-fragment-index="2"><td>Secure ISAC [15]</td><td>whole block: rate \(R_2(s)\), with \(E_{\SC} \gt \Ch\)</td><td>\((m \oplus r_2, n)\): rate \(R_1(s)\)</td><td>hides the state-dependent type \(P_{X,s}\) from a sensing eavesdropper</td></tr>
+    <tr class="fragment" data-fragment-index="3"><td>Channel synthesis [5]</td><td>\((m,k)\): \(R + R_0 \gt \I(X,Y;U)\); row \(k\): \(R \gt \I(X;U)\)</td><td>none: the decoder simulates</td><td>strong coordination with the least communication</td></tr>
+    <tr class="fragment" data-fragment-index="4"><td>LLM watermarking [22]</td><td>\((k,j)\): \(R_K + R_0 \gt \I(U;X,S)\); \(j\): \(R_0 \gt \I(U;S)\)</td><td>\((m,j)\): \(R + R_0 \lt \I(U;X)\)</td><td>a watermark that preserves the LLM's distribution for every message</td></tr>
+  </tbody>
+</table>
+```
+
+::: {.fragment fragment-index=5}
+
+- **Reliability** needs the codebook small enough to pack; **resolvability** needs parts of it large enough to cover
+- **Scale matters**: $n$ for wiretap and synthesis, $n\alpha_n = \Theta(\sqrt n)$ for covertness, and an exponent race ($E_{\SC}$ vs. $\Ch$) for secure sensing
+- **Strength matters**: high-probability soft covering turns "on average over messages" into "for every message"
+
+:::
+
+## References
+
+::: {.small .refs}
+[1] C. E. Shannon, "Certain Results in Coding Theory for Noisy Channels," *Information and Control*, 1957.<br>
+[2] A. D. Wyner, "The Common Information of Two Dependent Random Variables," *IEEE Trans. Inf. Theory*, 1975.<br>
+[3] T. S. Han, S. Verdú, "Approximation Theory of Output Statistics," *IEEE Trans. Inf. Theory*, 1993.<br>
+[4] M. Hayashi, "General Nonasymptotic and Asymptotic Formulas in Channel Resolvability and Identification Capacity and Their Application to the Wiretap Channel," *IEEE Trans. Inf. Theory*, 2006.<br>
+[5] P. Cuff, "Distributed Channel Synthesis," *IEEE Trans. Inf. Theory*, 2013.<br>
+[6] P. Cuff, "A Stronger Soft-Covering Lemma and Applications," IEEE CNS Workshops, 2015.<br>
+[7] M. B. Parizi, E. Telatar, N. Merhav, "Exact Random Coding Secrecy Exponents for the Wiretap Channel," *IEEE Trans. Inf. Theory*, 2017.<br>
+[8] S. Yagli, P. Cuff, "Exact Soft-Covering Exponent," *IEEE Trans. Inf. Theory*, 2019.<br>
+[9] C. McDiarmid, "On the Method of Bounded Differences," *Surveys in Combinatorics*, 1989.<br>
+[10] A. D. Wyner, "The Wire-Tap Channel," *Bell Syst. Tech. J.*, 1975.<br>
+[11] M. R. Bloch, J. N. Laneman, "Strong Secrecy From Channel Resolvability," *IEEE Trans. Inf. Theory*, 2013.<br>
+[12] M. R. Bloch, "Covert Communication over Noisy Channels: A Resolvability Perspective," *IEEE Trans. Inf. Theory*, 2016.<br>
+[13] B. A. Bash, D. Goeckel, D. Towsley, "Limits of Reliable Communication with Low Probability of Detection on AWGN Channels," *IEEE J. Sel. Areas Commun.*, 2013.<br>
+[14] L. Wang, G. W. Wornell, L. Zheng, "Fundamental Limits of Communication with Low Probability of Detection," *IEEE Trans. Inf. Theory*, 2016.<br>
+[15] S. Guo, M. R. Bloch, "Secure Integrated Sensing and Communication against Communication and Sensing Eavesdropping," arXiv:2601.23216, 2026.<br>
+[16] R. Ahlswede, N. Cai, "Transmission, Identification and Common Randomness Capacities for Wire-Tape Channels with Secure Feedback from the Decoder," *General Theory of Information Transfer and Combinatorics*, Springer, 2006.<br>
+[17] H. Chernoff, "A Measure of Asymptotic Efficiency for Tests of a Hypothesis Based on the Sum of Observations," *Ann. Math. Stat.*, 1952.<br>
+[18] C. H. Bennett, P. W. Shor, J. A. Smolin, A. V. Thapliyal, "Entanglement-Assisted Capacity of a Quantum Channel and the Reverse Shannon Theorem," *IEEE Trans. Inf. Theory*, 2002.<br>
+[19] A. Winter, "Compression of Sources of Probability Distributions and Density Operators," arXiv:quant-ph/0208131, 2002.<br>
+[20] P. Cuff, H. H. Permuter, T. M. Cover, "Coordination Capacity," *IEEE Trans. Inf. Theory*, 2010.<br>
+[21] E. C. Song, P. Cuff, H. V. Poor, "The Likelihood Encoder for Lossy Compression," *IEEE Trans. Inf. Theory*, 2016.<br>
+[22] S. Guo, T. Kann, T. Baluta, M. R. Bloch, "Covert Multi-bit LLM Watermarking: An Information Theory and Coding Approach," IEEE ITW, 2026.<br>
+[23] S. I. Gel'fand, M. S. Pinsker, "Coding for Channel with Random Parameters," *Probl. Control Inf. Theory*, 1980.<br>
+[24] A. Gilani, S. Vithana, C. X. Long, O. Kosut, L. Sankar, F. P. Calmon, "ArcMark: Distortion-Free Multi-Byte LLM Watermark via Optimal Transport," NeurIPS, 2026.<br>
+[25] M. R. Bloch, *Information-Theoretic Security: A Unified Treatment of Information-Theoretic Primitives and Algorithms*, draft v0.23, Georgia Institute of Technology, 2020.
+:::
